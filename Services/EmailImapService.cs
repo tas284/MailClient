@@ -1,7 +1,9 @@
 ﻿using MailClient.Configuration;
 using MailClient.InputModel;
 using MailClient.Interfaces;
+using MailKit;
 using MailKit.Net.Imap;
+using MailKit.Search;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -9,19 +11,20 @@ using System.Text;
 
 namespace MailClient.Services
 {
-    public class MailService : IMailService
+    public class EmailImapService : IEmailImapService
     {
         private readonly RabbitMqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
 
-        public MailService(IOptions<RabbitMqConfiguration> configuration)
+        public EmailImapService(IOptions<RabbitMqConfiguration> configuration)
         {
             _configuration = configuration.Value;
             _factory = new ConnectionFactory { HostName = _configuration.Host };
         }
 
-        public Task<bool> SyncEmail(SyncEmailInputModel input)
+        public Task<string> SyncMessages(SyncEmailInputModel input)
         {
+            var total = 0;
             using (var client = new ImapClient())
             {
                 client.Connect(input.ImapAddress, input.ImapPort, true);
@@ -30,27 +33,38 @@ namespace MailClient.Services
                 {
                     client.Authenticate(input.User, input.Password);
                     var inbox = client.Inbox;
-                    inbox.Open(MailKit.FolderAccess.ReadOnly);
 
-                    for (int i = inbox.Count; i > 0; i--)
+                    foreach (var uid in GetUids(input.DateSync, inbox))
                     {
-                        var message = inbox.GetMessage(i - 1);
+                        var message = inbox.GetMessage(uid);
                         Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
+                        total++;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return Task.FromResult(false);
+                    var error = $"Erro to sync messages: {ex.Message}";
+                    return Task.FromResult(error);
                 }
 
                 client.Disconnect(true);
             }
-            return Task.FromResult(true);
+            return Task.FromResult($"{total} messages sync!");
         }
 
-        public Task Handle(string inbox, string emailFrom, string subject, string body, DateTime date)
+        private static IList<UniqueId> GetUids(DateTime initial, IMailFolder folder)
         {
-            return Publish(new InputImapMail(inbox, emailFrom, subject, body, date));
+            folder.Open(FolderAccess.ReadOnly);
+
+            var query = SearchQuery.DeliveredAfter(initial);
+            var uids = folder.Search(query);
+
+            return uids;
+        }
+
+        private void Handle(string inbox, string emailFrom, string subject, string body, DateTime date)
+        {
+            Publish(new InputImapMail(inbox, emailFrom, subject, body, date));
         }
 
         private Task Publish(object message)

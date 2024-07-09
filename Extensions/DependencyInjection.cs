@@ -8,7 +8,7 @@ namespace MailClient.Extensions
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IEmailImapService, EmailImapService>();
             return services;
         }
 
