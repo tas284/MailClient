@@ -1,6 +1,5 @@
 ﻿using MailClient.InputModel;
 using MailClient.Interfaces;
-using MailClient.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MailClient.Controllers
@@ -16,7 +15,7 @@ namespace MailClient.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SyncMessages([FromBody] SyncEmailInputModel inputModel)
+        public async Task<IActionResult> SyncMessages([FromBody] SyncEmailImapInputModel inputModel)
         {
             var result = await _emailService.SyncMessages(inputModel).ConfigureAwait(false);
             return Ok(result);

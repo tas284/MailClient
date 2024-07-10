@@ -1,6 +1,6 @@
 ﻿namespace MailClient.InputModel
 {
-    public class SyncEmailInputModel
+    public class SyncEmailImapInputModel
     {
         public string User { get; set; }
         public string Password { get; set; }
