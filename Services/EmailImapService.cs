@@ -22,7 +22,7 @@ namespace MailClient.Services
             _factory = new ConnectionFactory { HostName = _configuration.Host };
         }
 
-        public Task<string> SyncMessages(SyncEmailInputModel input)
+        public Task<string> SyncMessages(SyncEmailImapInputModel input)
         {
             var total = 0;
             using (var client = new ImapClient())
