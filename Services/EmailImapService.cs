@@ -4,6 +4,7 @@ using MailClient.Interfaces;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
+using MailKit.Security;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -27,7 +28,7 @@ namespace MailClient.Services
             var total = 0;
             using (var client = new ImapClient())
             {
-                client.Connect(input.ImapAddress, input.ImapPort, true);
+                client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
 
                 try
                 {

@@ -1,6 +1,7 @@
 ﻿using MailClient.InputModel;
 using MailClient.Interfaces;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 
 namespace MailClient.Services
@@ -15,7 +16,7 @@ namespace MailClient.Services
             {
                 try
                 {
-                    client.Connect(input.SmtpAddress, input.SmtpPort, false);
+                    client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto);
 
                     client.Authenticate(input.User, input.Password);
 
