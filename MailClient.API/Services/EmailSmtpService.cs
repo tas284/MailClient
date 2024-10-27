@@ -2,18 +2,24 @@
 using MailClient.API.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using System;
-using System.Threading.Tasks;
 
 namespace MailClient.API.Services
 {
     public class EmailSmtpService : IEmailSmtpService
     {
-        public EmailSmtpService() { }
+        private readonly ILogger<EmailSmtpService> _logger;
 
-        public Task<string> Send(SendEmailInputModel input)
+        public EmailSmtpService(ILogger<EmailSmtpService> logger)
         {
+            _logger = logger;
+        }
+
+        public string Send(SendEmailInputModel input)
+        {
+            string result = string.Empty;
             using (var client = new SmtpClient())
             {
                 try
@@ -21,21 +27,28 @@ namespace MailClient.API.Services
                     client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto);
 
                     client.Authenticate(input.User, input.Password);
+                    _logger.LogInformation($"Email authenticated on: {input.SmtpAddress}:{input.SmtpPort}");
 
                     var message = CreateMessage(input);
 
-                    client.Send(message);
+                    var status = client.Send(message);
+                    _logger.LogInformation($"Result MailKit Send [{status}].");
+                    
+                    result = $"Email send succesfully to {message.To}.";
+                    _logger.LogInformation(result);
 
                     client.Disconnect(true);
                 }
                 catch (Exception ex)
                 {
-                    return Task.FromResult($"Error to send email: {ex.Message}.");
+                    var error = $"Error to send email: {ex.Message}.";
+                    _logger.LogError(error);
+                    return error;
                 }
                 
             }
 
-            return Task.FromResult("Email sent successfull!");
+            return result;
         }
 
         private MimeMessage CreateMessage(SendEmailInputModel input)
