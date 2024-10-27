@@ -5,3 +5,5 @@
 /.vs
 /MailClient.API/obj
 /MailClient.API/bin/Debug/net8.0
+/MailClient.Consumer/bin/Debug/net8.0
+/MailClient.Consumer/obj
