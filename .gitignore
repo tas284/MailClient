@@ -4,3 +4,4 @@
 
 /.vs
 /MailClient.API/obj
+/MailClient.API/bin/Debug/net8.0
