@@ -1,6 +1,7 @@
 ﻿using MailClient.API.Configuration;
 using MailClient.API.InputModel;
 using MailClient.API.Interfaces;
+using MailClient.API.Model;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
@@ -40,7 +41,7 @@ namespace MailClient.API.Services
                 try
                 {
                     client.Authenticate(input.User, input.Password);
-                    _logger.LogInformation($"Email authenticated on: {input.ImapAddress}");
+                    _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
 
                     var inbox = client.Inbox;
                     var uids = GetUids(input.DateSync, inbox);
@@ -108,6 +109,4 @@ namespace MailClient.API.Services
             await Task.CompletedTask;
         }
     }
-
-    public record InputImapMail(string Inbox, string EmailFrom, string Subject, string Body, DateTime Date);
 }

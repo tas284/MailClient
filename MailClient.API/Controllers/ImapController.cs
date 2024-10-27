@@ -9,16 +9,17 @@ namespace MailClient.API.Controllers
     [ApiController]
     public class ImapController : ControllerBase
     {
-        private readonly IEmailImapService _emailService;
-        public ImapController(IEmailImapService emailService)
+        private readonly IEmailImapService _service;
+
+        public ImapController(IEmailImapService service)
         {
-            _emailService = emailService;
+            _service = service;
         }
 
         [HttpPost]
         public async Task<IActionResult> SyncMessages([FromBody] SyncEmailImapInputModel inputModel)
         {
-            var result = await _emailService.SyncMessages(inputModel);
+            var result = await _service.SyncMessages(inputModel);
             return Ok(result);
         }
     }

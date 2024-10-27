@@ -9,17 +9,17 @@ namespace MailClient.API.Controllers
     [ApiController]
     public class SmtpController : ControllerBase
     {
-        private readonly IEmailSmtpService _emailSmtpService;
+        private readonly IEmailSmtpService _service;
 
-        public SmtpController(IEmailSmtpService emailSmtpService)
+        public SmtpController(IEmailSmtpService service)
         {
-            _emailSmtpService = emailSmtpService;
+            _service = service;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendEmail([FromBody] SendEmailInputModel input)
+        public IActionResult SendEmail([FromBody] SendEmailInputModel input)
         {
-            var result = await _emailSmtpService.Send(input);
+            var result = _service.Send(input);
             return Ok(result);
         }
     }
