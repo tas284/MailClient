@@ -18,6 +18,7 @@ namespace MailClient
             var consumerService = host.Services.GetRequiredService<ConsumerEmailImapService>();
 
             await consumerService.ExecuteAsync();
+            //var db = host.Services.GetRequiredService<DBConnection>();
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureServices((context, services) =>
@@ -27,6 +28,9 @@ namespace MailClient
             services.AddSingleton<IConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
             services.AddSingleton<ConsumerEmailImapService>();
+
+            services.Configure<MongoDBConfiguration>(context.Configuration.GetSection("MongoDBConfiguration"));
+            services.AddSingleton<DBConnection>();
         });
     }
 }
