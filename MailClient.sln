@@ -5,8 +5,15 @@ VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.API", "MailClient.API\MailClient.API.csproj", "{EC57F66A-8F25-41BD-9B5D-D1F7971476C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Consumer", "MailClient.Consumer\MailClient.Consumer.csproj", "{17E26A1F-C1AD-4D0F-B497-D16ECA236468}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.Consumer", "MailClient.Consumer\MailClient.Consumer.csproj", "{17E26A1F-C1AD-4D0F-B497-D16ECA236468}"
 EndProject
+<<<<<<< Updated upstream
+=======
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.Infrastructure", "MailClient.Infrastructure\MailClient.Infrastructure.csproj", "{D395D808-43F9-4AC2-B1D1-E183DA69981F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Domain", "MailClient.Domain\MailClient.Domain.csproj", "{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}"
+EndProject
+>>>>>>> Stashed changes
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +28,17 @@ Global
 		{17E26A1F-C1AD-4D0F-B497-D16ECA236468}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17E26A1F-C1AD-4D0F-B497-D16ECA236468}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17E26A1F-C1AD-4D0F-B497-D16ECA236468}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< Updated upstream
+=======
+		{D395D808-43F9-4AC2-B1D1-E183DA69981F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D395D808-43F9-4AC2-B1D1-E183DA69981F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D395D808-43F9-4AC2-B1D1-E183DA69981F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D395D808-43F9-4AC2-B1D1-E183DA69981F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> Stashed changes
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

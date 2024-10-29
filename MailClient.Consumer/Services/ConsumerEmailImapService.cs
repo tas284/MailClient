@@ -2,10 +2,13 @@
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
+using Newtonsoft.Json;
 using System.Text;
 using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
 using Newtonsoft.Json;
+using MailClient.Domain.Repositories;
+using MailClient.Domain.Entities;
 
 namespace MailClient.Services
 {
@@ -14,12 +17,15 @@ namespace MailClient.Services
         private readonly RabbitMqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
         private readonly ILogger<ConsumerEmailImapService> _logger;
+        private readonly IRepositoryEmail _repository;
 
         public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger)
+        public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger, IRepositoryEmail repository)
         {
             _configuration = configuration.Value;
             _factory = new ConnectionFactory { HostName = _configuration.Host };
             _logger = logger;
+            _repository = repository;
         }
 
         public async Task ExecuteAsync()
@@ -38,7 +44,7 @@ namespace MailClient.Services
             await Task.Delay(-1);
         }
 
-        private void ReadQueue(object sender, BasicDeliverEventArgs eventArgs)
+        private async void ReadQueue(object sender, BasicDeliverEventArgs eventArgs)
         {
             try
             {
@@ -49,8 +55,16 @@ namespace MailClient.Services
                 if (imapMail != null)
                 {
                     _logger.LogInformation($"Email received: {imapMail.Subject} from {imapMail.EmailFrom}");
-                }
 
+                    await _repository.InsertOneAsync(new Email
+                    {
+                        Inbox = imapMail.Inbox,
+                        EmailFrom = imapMail.EmailFrom,
+                        Subject = imapMail.Subject,
+                        Body = imapMail.Body,
+                        Date = imapMail.Date
+                    });
+                }
             }
             catch (Exception ex)
             {
