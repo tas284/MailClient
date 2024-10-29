@@ -8,9 +8,6 @@ using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
-using Newtonsoft.Json;
-using MailClient.Infrastructure.Connection;
-using MailClient.Infrastructure.Model;
 
 namespace MailClient.Services
 {
