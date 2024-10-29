@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using System.Text;
 using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
-using Newtonsoft.Json;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
 
@@ -19,7 +18,6 @@ namespace MailClient.Services
         private readonly ILogger<ConsumerEmailImapService> _logger;
         private readonly IRepositoryEmail _repository;
 
-        public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger)
         public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger, IRepositoryEmail repository)
         {
             _configuration = configuration.Value;
