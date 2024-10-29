@@ -1,4 +1,4 @@
-﻿namespace MailClient.API.Configuration
+﻿namespace MailClient.Application.Configuration
 {
     public class RabbitMqConfiguration
     {

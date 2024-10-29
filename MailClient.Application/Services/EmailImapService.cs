@@ -1,7 +1,7 @@
-﻿using MailClient.API.Configuration;
-using MailClient.API.InputModel;
-using MailClient.API.Interfaces;
-using MailClient.API.Model;
+﻿using MailClient.Application.Configuration;
+using MailClient.Application.InputModel;
+using MailClient.Application.Interfaces;
+using MailClient.Application.Model;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
@@ -10,13 +10,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace MailClient.API.Services
+namespace MailClient.Application.Services
 {
     public class EmailImapService : IEmailImapService
     {

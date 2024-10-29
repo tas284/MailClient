@@ -1,4 +1,4 @@
-﻿namespace MailClient.API.InputModel
+﻿namespace MailClient.Application.InputModel
 {
     public class SendEmailInputModel
     {

@@ -1,7 +1,6 @@
-﻿using MailClient.API.InputModel;
-using System.Threading.Tasks;
+﻿using MailClient.Application.InputModel;
 
-namespace MailClient.API.Interfaces
+namespace MailClient.Application.Interfaces
 {
     public interface IEmailImapService
     {

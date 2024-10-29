@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MailClient.API.InputModel
+﻿namespace MailClient.Application.InputModel
 {
     public class SyncEmailImapInputModel
     {

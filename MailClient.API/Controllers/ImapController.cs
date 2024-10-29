@@ -1,9 +1,9 @@
-﻿using MailClient.API.InputModel;
-using MailClient.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using MailClient.Application.Interfaces;
+using MailClient.Application.InputModel;
 
-namespace MailClient.API.Controllers
+namespace MailClient.Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
