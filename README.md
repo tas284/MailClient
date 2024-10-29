@@ -5,7 +5,7 @@
 Project to read emails from a specified inbox using an ASP.NET Core API and a console application (consumer). The API authenticates with an email server to retrieve emails for a specified period and sends them to a RabbitMQ queue. The consumer then processes these messages and saves them to a MongoDB database.
 
 ### Requirements
-1. .NET SDK (version 8.0 or higher)
+1. NET SDK (version 8.0 or higher)
 2. MongoDB
 3. RabbitMQ
 
