@@ -14,3 +14,5 @@
 /MailClient.Domain/obj
 /MailClient.Domain/bin/Debug/net8.0
 =======
+/MailClient.Application/bin/Debug/net8.0
+/MailClient.Application/obj

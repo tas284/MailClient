@@ -1,12 +1,11 @@
-﻿using MailClient.API.InputModel;
-using MailClient.API.Interfaces;
+﻿using MailClient.Application.InputModel;
+using MailClient.Application.Interfaces;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using MimeKit;
-using System;
 
-namespace MailClient.API.Services
+namespace MailClient.Application.Services
 {
     public class EmailSmtpService : IEmailSmtpService
     {

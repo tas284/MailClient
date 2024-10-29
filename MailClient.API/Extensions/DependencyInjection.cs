@@ -1,10 +1,10 @@
-﻿using MailClient.API.Configuration;
-using MailClient.API.Interfaces;
-using MailClient.API.Services;
+﻿using MailClient.Application.Configuration;
+using MailClient.Application.Interfaces;
+using MailClient.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MailClient.API.Extensions
+namespace MailClient.Application.Extensions
 {
     public static class DependencyInjection
     {

@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.API", "MailClien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.Consumer", "MailClient.Consumer\MailClient.Consumer.csproj", "{17E26A1F-C1AD-4D0F-B497-D16ECA236468}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.Infrastructure", "MailClient.Infrastructure\MailClient.Infrastructure.csproj", "{D395D808-43F9-4AC2-B1D1-E183DA69981F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Infrastructure", "MailClient.Infrastructure\MailClient.Infrastructure.csproj", "{D395D808-43F9-4AC2-B1D1-E183DA69981F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Domain", "MailClient.Domain\MailClient.Domain.csproj", "{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Infrastructure", "MailClient.Infrastructure\MailClient.Infrastructure.csproj", "{D395D808-43F9-4AC2-B1D1-E183DA69981F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.Application", "MailClient.Application\MailClient.Application.csproj", "{DE6C0726-0BEA-4114-83D3-DD59CCB96B34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,7 +35,10 @@ Global
 		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1808FA87-B1EF-4164-A9D9-8A9CAF8D86C7}.Release|Any CPU.Build.0 = Release|Any CPU
-
+		{DE6C0726-0BEA-4114-83D3-DD59CCB96B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6C0726-0BEA-4114-83D3-DD59CCB96B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6C0726-0BEA-4114-83D3-DD59CCB96B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6C0726-0BEA-4114-83D3-DD59CCB96B34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
