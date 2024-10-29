@@ -2,9 +2,12 @@
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
+using Newtonsoft.Json;
 using System.Text;
 using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
+using MailClient.Domain.Repositories;
+using MailClient.Domain.Entities;
 using Newtonsoft.Json;
 using MailClient.Infrastructure.Connection;
 using MailClient.Infrastructure.Model;
@@ -16,14 +19,14 @@ namespace MailClient.Services
         private readonly RabbitMqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
         private readonly ILogger<ConsumerEmailImapService> _logger;
-        private readonly DBConnection _connection;
+        private readonly IRepositoryEmail _repository;
 
-        public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger, DBConnection connection)
+        public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger, IRepositoryEmail repository)
         {
             _configuration = configuration.Value;
             _factory = new ConnectionFactory { HostName = _configuration.Host };
             _logger = logger;
-            _connection = connection;
+            _repository = repository;
         }
 
         public async Task ExecuteAsync()
@@ -42,7 +45,7 @@ namespace MailClient.Services
             await Task.Delay(-1);
         }
 
-        private void ReadQueue(object sender, BasicDeliverEventArgs eventArgs)
+        private async void ReadQueue(object sender, BasicDeliverEventArgs eventArgs)
         {
             try
             {
@@ -54,7 +57,7 @@ namespace MailClient.Services
                 {
                     _logger.LogInformation($"Email received: {imapMail.Subject} from {imapMail.EmailFrom}");
 
-                    _connection.Database().GetCollection<Email>("emails").InsertOne(new Email
+                    await _repository.InsertOneAsync(new Email
                     {
                         Inbox = imapMail.Inbox,
                         EmailFrom = imapMail.EmailFrom,
@@ -63,7 +66,6 @@ namespace MailClient.Services
                         Date = imapMail.Date
                     });
                 }
-
             }
             catch (Exception ex)
             {

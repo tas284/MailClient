@@ -4,6 +4,9 @@ using MailClient.Consumer.Configuration;
 using MailClient.Services;
 using MailClient.Infrastructure.Configuration;
 using MailClient.Infrastructure.Connection;
+using MailClient.Domain.Interfaces;
+using MailClient.Domain.Repositories;
+using MailClient.Infrastructure.Repostitories;
 
 namespace MailClient
 {
@@ -21,6 +24,9 @@ namespace MailClient
         static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureServices((context, services) =>
         {
             services.Configure<RabbitMqConfiguration>(context.Configuration.GetSection("RabbitMqConfiguration"));
+            services.Configure<MongoDBConfiguration>(context.Configuration.GetSection("MongoDBConfiguration"));
+            services.AddSingleton<IConnection, MongoDBConnection>();
+            services.AddScoped<IRepositoryEmail, RepositoryEmail>();
             services.AddSingleton<ConsumerEmailImapService>();
 
             services.Configure<MongoDBConfiguration>(context.Configuration.GetSection("MongoDBConfiguration"));

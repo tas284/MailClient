@@ -36,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\MailClient.Domain\MailClient.Domain.csproj" />
 	  <ProjectReference Include="..\MailClient.Infrastructure\MailClient.Infrastructure.csproj" />
 	</ItemGroup>
 

@@ -11,3 +11,6 @@
 /MailClient.Teste/bin/Debug/net8.0
 /MailClient.Teste/obj
 /MailClient.Infrastructure/bin/Debug/net8.0
+/MailClient.Domain/obj
+/MailClient.Domain/bin/Debug/net8.0
+=======
