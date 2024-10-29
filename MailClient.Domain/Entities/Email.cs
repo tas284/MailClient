@@ -1,8 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using System.Text;
-using System.IO.Compression;
 using MailClient.Infrastructure.Interfaces;
+using MailClient.Domain.Extensions;
 
 namespace MailClient.Domain.Entities
 {
@@ -20,37 +19,9 @@ namespace MailClient.Domain.Entities
         [BsonElement("compressedBody")]
         public byte[] CompressedBody
         { 
-            get => CompressString(Body);
-            set => Body = DecompressString(value);
+            get => Binary.CompressString(Body);
+            set => Body = Binary.DecompressString(value);
         }
         public DateTime Date { get; set; }
-
-
-        public static byte[] CompressString(string text)
-        {
-            if (string.IsNullOrEmpty(text)) { return null; }
-
-            byte[] textAsByte = Encoding.UTF8.GetBytes(text);
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress))
-                {
-                    gzipStream.Write(textAsByte, 0, textAsByte.Length);
-                }
-                return memoryStream.ToArray();
-            }
-        }
-
-        public static string DecompressString(byte[] compressData)
-        {
-            if (compressData == null) { return null; }
-
-            using (var memoryStream = new MemoryStream())
-            using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
-            using (var reader = new StreamReader(gzipStream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
     }
 }
