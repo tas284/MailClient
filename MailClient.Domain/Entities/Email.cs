@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Domain.Extensions;
 
@@ -14,14 +14,14 @@ namespace MailClient.Domain.Entities
         public string Subject { get; set; }
 
         [BsonIgnore]
-        public string Body { get; set; }
-
-        [BsonElement("compressedBody")]
-        public byte[] CompressedBody
-        { 
-            get => Binary.CompressString(Body);
-            set => Body = Binary.DecompressString(value);
+        public string Body
+        {
+            get => Binary.DecompressString(CompressedBody);
+            set => CompressedBody = Binary.CompressString(value);
         }
+
+        public byte[] CompressedBody { get; set; }
+        
         public DateTime Date { get; set; }
     }
 }

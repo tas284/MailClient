@@ -10,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Configuration.AddConfigurationRabbitMq(builder.Services);
+builder.Configuration.AddMongoDBConfiguration(builder.Services);
 builder.Services.AddInfrastructure();
 
 var app = builder.Build();
