@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MailClient.Infrastructure.Configuration;
 using MailClient.Domain.Interfaces;
+using MailClient.Infrastructure.Interfaces;
 
 namespace MailClient.Infrastructure.Connection
 {
@@ -19,5 +20,10 @@ namespace MailClient.Infrastructure.Connection
         }
 
         public IMongoDatabase Database {  get { return _database; } }
+
+        public IMongoCollection<TDocument> GetCollection<TDocument>(string name)
+        {
+            return _database.GetCollection<TDocument>(name);
+        }
     }
 }
