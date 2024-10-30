@@ -21,6 +21,7 @@ namespace MailClient.Application.Services
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
+                if (entity == null) throw new Exception($"Email not found: {id}");
                 var email = new EmailDto(entity.Id.ToString(), entity.EmailFrom, entity.Inbox, entity.Subject, entity.Body, entity.Date);
                 return email;
             }

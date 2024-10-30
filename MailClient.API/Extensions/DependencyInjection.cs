@@ -8,12 +8,21 @@ using MailClient.Infrastructure.Connection;
 using MailClient.Infrastructure.Repostitories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace MailClient.Application.Extensions
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IHostApplicationBuilder Setup(this IHostApplicationBuilder builder)
+        {
+            builder.Services.AddConfigurationRabbitMq(builder.Configuration);
+            builder.Services.AddMongoDBConfiguration(builder.Configuration);
+            builder.Services.AddInfrastructure();
+            return builder;
+        }
+
+        private static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddSingleton<IConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
@@ -23,16 +32,14 @@ namespace MailClient.Application.Extensions
             return services;
         }
 
-        public static IConfiguration AddConfigurationRabbitMq(this IConfiguration configuration, IServiceCollection services)
+        private static IServiceCollection AddConfigurationRabbitMq(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMqConfiguration"));
-            return configuration;
+            return services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMqConfiguration"));
         }
 
-        public static IConfiguration AddMongoDBConfiguration(this IConfiguration configuration, IServiceCollection services)
+        private static IServiceCollection AddMongoDBConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<MongoDBConfiguration>(configuration.GetSection("MongoDBConfiguration"));
-            return configuration;
+            return services.Configure<MongoDBConfiguration>(configuration.GetSection("MongoDBConfiguration"));
         }
     }
 }
