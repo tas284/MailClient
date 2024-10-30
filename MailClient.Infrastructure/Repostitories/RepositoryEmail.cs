@@ -1,4 +1,6 @@
-﻿using DnsClient.Internal;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
+using DnsClient.Internal;
 using MailClient.Domain.Entities;
 using MailClient.Domain.Interfaces;
 using MailClient.Domain.Repositories;
@@ -29,6 +31,21 @@ namespace MailClient.Infrastructure.Repostitories
             catch (Exception ex)
             {
                 _logger.LogError($"Error when adding email message to database: {entity.Id}");
+            }
+        }
+
+        public async Task<Email> GetByIdAsync(string id)
+        {
+            try
+            {
+                var filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
+                var entity = await _connection.Database.GetCollection<Email>(Collection).Find(filter).FirstOrDefaultAsync();
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error when adding email message to database: {ex.Message}");
+                throw new Exception($"Error when adding email message to database: {ex.Message}", ex);
             }
         }
     }

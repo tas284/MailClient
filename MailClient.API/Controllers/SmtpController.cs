@@ -1,7 +1,6 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace MailClient.Application.Controllers
 {
