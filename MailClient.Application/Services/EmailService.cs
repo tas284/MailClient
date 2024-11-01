@@ -2,6 +2,7 @@
 using MailClient.Application.DTO;
 using MailClient.Application.Interfaces;
 using MailClient.Domain.Repositories;
+using MailClient.Domain.Entities;
 
 namespace MailClient.Application.Services
 {
@@ -20,9 +21,9 @@ namespace MailClient.Application.Services
         {
             try
             {
-                var entity = await _repository.GetByIdAsync(id);
+                Email entity = await _repository.GetByIdAsync(id);
                 if (entity is null) throw new Exception($"Email not found in the database: {id}");
-                var email = EmailDto.Create(entity);
+                EmailDto email = EmailDto.Create(entity);
                 return email;
             }
             catch (Exception ex)
@@ -37,7 +38,7 @@ namespace MailClient.Application.Services
         {
             try
             {
-                var entities = await _repository.GetAllAsync();
+                IEnumerable<Email> entities = await _repository.GetAllAsync();
                 if (entities == null || !entities.Any()) throw new Exception("No emails found in the database.");
                 return entities.Select(EmailDto.Create);
             }
@@ -53,7 +54,7 @@ namespace MailClient.Application.Services
         {
             try
             {
-                var removed = await _repository.DeleteByIdAsync(id);
+                bool removed = await _repository.DeleteByIdAsync(id);
                 return removed ? "Email successfully removed." : "No email found with this Id.";
             }
             catch (Exception ex)
@@ -68,7 +69,7 @@ namespace MailClient.Application.Services
         {
             try
             {
-                var removed = await _repository.DeleteAllAsync();
+                long removed = await _repository.DeleteAllAsync();
                 return removed > 0
                     ? $"{removed} emails successfully removed."
                     : "No emails were found to delete.";

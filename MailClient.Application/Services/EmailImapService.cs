@@ -40,7 +40,6 @@ namespace MailClient.Application.Services
             List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(count).ToList();
             while (range.Count > 0)
             {
-
                 Parallel.ForEach(range, options, input =>
                 {
                     using (var client = new ImapClient())
@@ -60,7 +59,7 @@ namespace MailClient.Application.Services
                             foreach (var uid in uids)
                             {
                                 MimeMessage message = inbox.GetMessage(uid);
-                                Publish(InputImapMail.Create(message));
+                                Publish(ImapMailMessage.Create(message));
                                 total++;
                             }
                         }
@@ -91,7 +90,7 @@ namespace MailClient.Application.Services
 
             input.EndDate = input.StartDate.AddDays(days);
 
-            while (input.EndDate < DateTime.Now)
+            while (input.EndDate < DateTime.Now.AddDays(1))
             {
                 SyncEmailImapInputModel item = new SyncEmailImapInputModel
                 {
@@ -150,7 +149,7 @@ namespace MailClient.Application.Services
             return folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
         }
 
-        private void Publish(InputImapMail message)
+        private void Publish(ImapMailMessage message)
         {
             using IConnection connection = _factory.CreateConnection();
             using IModel channel = connection.CreateModel();
