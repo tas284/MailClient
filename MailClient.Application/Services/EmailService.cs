@@ -21,14 +21,63 @@ namespace MailClient.Application.Services
             try
             {
                 var entity = await _repository.GetByIdAsync(id);
-                if (entity == null) throw new Exception($"Email not found: {id}");
-                var email = new EmailDto(entity.Id.ToString(), entity.EmailFrom, entity.Inbox, entity.Subject, entity.Body, entity.Date);
+                if (entity is null) throw new Exception($"Email not found in the database: {id}");
+                var email = EmailDto.Create(entity);
                 return email;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error retrieving email from database: {ex.Message}");
-                throw new Exception($"Error retrieving email from database: {ex.Message}", ex);
+                string message = $"An error occurred while retrieving email from database: {ex.Message}";
+                _logger.LogError(message);
+                throw new Exception(message, ex);
+            }
+        }
+
+        public async Task<IEnumerable<EmailDto>> GetAllAsync()
+        {
+            try
+            {
+                var entities = await _repository.GetAllAsync();
+                if (entities == null || !entities.Any()) throw new Exception("No emails found in the database.");
+                return entities.Select(EmailDto.Create);
+            }
+            catch (Exception ex)
+            {
+                string message = $"An error occurred while retrieving all emails from the database: {ex.Message}";
+                _logger.LogError(message);
+                throw new Exception(message, ex);
+            }
+        }
+
+        public async Task<string> DeleteByIdAsync(string id)
+        {
+            try
+            {
+                var removed = await _repository.DeleteByIdAsync(id);
+                return removed ? "Email successfully removed." : "No email found with this Id.";
+            }
+            catch (Exception ex)
+            {
+                string message = $"Error retrieving email from database: {ex.Message}";
+                _logger.LogError(message);
+                throw new Exception(message, ex);
+            }
+        }
+
+        public async Task<string> DeleteAllAsync()
+        {
+            try
+            {
+                var removed = await _repository.DeleteAllAsync();
+                return removed > 0
+                    ? $"{removed} emails successfully removed."
+                    : "No emails were found to delete.";
+            }
+            catch (Exception ex)
+            {
+                string message = $"An error occurred while deleting emails from the database: {ex.Message}";
+                _logger.LogError(message);
+                throw new Exception(message, ex);
             }
         }
     }

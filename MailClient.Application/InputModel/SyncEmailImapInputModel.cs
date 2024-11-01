@@ -6,6 +6,7 @@
         public string Password { get; set; }
         public string ImapAddress { get; set; }
         public int ImapPort { get; set; }
-        public DateTime DateSync { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

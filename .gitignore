@@ -16,3 +16,5 @@
 =======
 /MailClient.Application/bin/Debug/net8.0
 /MailClient.Application/obj
+/MailClient.API/request.http
+/MailClient.API/request.http.rest
