@@ -18,7 +18,7 @@ namespace MailClient.Application.Controllers
         [HttpPost]
         public IActionResult SendEmail([FromBody] SendEmailInputModel input)
         {
-            var result = _service.Send(input);
+            string result = _service.Send(input);
             return Ok(result);
         }
     }

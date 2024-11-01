@@ -40,8 +40,7 @@ namespace MailClient.Infrastructure.Repostitories
         {
             try
             {
-                var filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
-                var entity = await _collection.Find(filter).FirstOrDefaultAsync();
+                Email entity = await _collection.Find(FilterById(id)).FirstOrDefaultAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -60,8 +59,7 @@ namespace MailClient.Infrastructure.Repostitories
         {
             try
             {
-                var filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
-                DeleteResult result = await _collection.DeleteOneAsync(filter);
+                DeleteResult result = await _collection.DeleteOneAsync(FilterById(id));
                 return result.IsAcknowledged && result.DeletedCount > 0;
             }
             catch (Exception ex)
@@ -83,6 +81,12 @@ namespace MailClient.Infrastructure.Repostitories
                 _logger.LogError($"Error when deleting all email messages from the database: {ex.Message}");
                 throw new Exception($"Failed to delete all email messages from the database: {ex.Message}", ex);
             }
+        }
+
+        private FilterDefinition<Email> FilterById(string id)
+        {
+            FilterDefinition<Email> filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
+            return filter;
         }
     }
 }

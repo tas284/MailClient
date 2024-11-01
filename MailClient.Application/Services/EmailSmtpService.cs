@@ -19,7 +19,7 @@ namespace MailClient.Application.Services
         public string Send(SendEmailInputModel input)
         {
             string result = string.Empty;
-            using (var client = new SmtpClient())
+            using (SmtpClient client = new SmtpClient())
             {
                 try
                 {
@@ -28,9 +28,9 @@ namespace MailClient.Application.Services
                     client.Authenticate(input.User, input.Password);
                     _logger.LogInformation($"Email authenticated on: {input.SmtpAddress}:{input.SmtpPort}");
 
-                    var message = CreateMessage(input);
+                    MimeMessage message = CreateMessage(input);
 
-                    var status = client.Send(message);
+                    string status = client.Send(message);
                     _logger.LogInformation($"Result MailKit Send [{status}].");
                     
                     result = $"Email send succesfully to {message.To}.";
@@ -44,7 +44,6 @@ namespace MailClient.Application.Services
                     _logger.LogError(error);
                     return error;
                 }
-                
             }
 
             return result;
@@ -52,21 +51,19 @@ namespace MailClient.Application.Services
 
         private MimeMessage CreateMessage(SendEmailInputModel input)
         {
-            var message = new MimeMessage();
+            MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress(input.FromName, input.FromEmail));
             message.To.Add(new MailboxAddress(input.ToName, input.ToEmail));
             message.Subject = input.Subject;
-
-            CreateBody(input, message);
-
-            return message;
+            
+            return CreateBody(message, input);
         }
 
-        private void CreateBody(SendEmailInputModel input, MimeMessage message)
+        private MimeMessage CreateBody(MimeMessage message, SendEmailInputModel input)
         {
             if (!string.IsNullOrEmpty(input.BodyHtml))
             {
-                var builder = new BodyBuilder();
+                BodyBuilder builder = new BodyBuilder();
                 builder.TextBody = input.Body;
                 builder.HtmlBody = input.BodyHtml;
                 message.Body = builder.ToMessageBody();
@@ -75,6 +72,7 @@ namespace MailClient.Application.Services
             {
                 message.Body = new TextPart("plain") { Text = input.Body };
             }
+            return message;
         }
     }
 }

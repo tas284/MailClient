@@ -23,7 +23,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                var result = await _service.GetAllAsync();
+                IEnumerable<EmailDto> result = await _service.GetAllAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -37,7 +37,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                var result = await _service.GetByIdAsync(id);
+                EmailDto result = await _service.GetByIdAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                var result = await _service.DeleteByIdAsync(id);
+                string result = await _service.DeleteByIdAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                var result = await _service.DeleteAllAsync();
+                string result = await _service.DeleteAllAsync();
                 return Ok(result);
             }
             catch (Exception ex)
