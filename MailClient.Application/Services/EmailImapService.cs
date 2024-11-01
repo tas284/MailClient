@@ -8,6 +8,7 @@ using MailKit.Search;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System.Text;
@@ -18,7 +19,7 @@ namespace MailClient.Application.Services
     {
         private readonly RabbitMqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
-        private ILogger<EmailImapService> _logger;
+        private readonly ILogger<EmailImapService> _logger;
 
         public EmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<EmailImapService> logger)
         {
@@ -31,16 +32,16 @@ namespace MailClient.Application.Services
         {
             List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
-            var total = 0;
-            var count = Environment.ProcessorCount;
-            var skip = 0;
+            int total = 0;
+            int skip = 0;
+            int count = Environment.ProcessorCount;
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = count };
 
             List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(count).ToList();
             while (range.Count > 0)
             {
-                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = count };
 
-                Parallel.ForEach(range, parallelOptions, input =>
+                Parallel.ForEach(range, options, input =>
                 {
                     using (var client = new ImapClient())
                     {
@@ -52,14 +53,14 @@ namespace MailClient.Application.Services
                             client.Authenticate(input.User, input.Password);
                             _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
 
-                            var inbox = client.Inbox;
-                            var uids = GetUids(input.StartDate, input.EndDate, inbox);
+                            IMailFolder inbox = client.Inbox;
+                            IList<UniqueId> uids = GetUids(input.StartDate, input.EndDate, inbox);
                             _logger.LogInformation($"{uids.Count} messages find.");
 
                             foreach (var uid in uids)
                             {
-                                var message = inbox.GetMessage(uid);
-                                Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
+                                MimeMessage message = inbox.GetMessage(uid);
+                                Publish(InputImapMail.Create(message));
                                 total++;
                             }
                         }
@@ -77,7 +78,7 @@ namespace MailClient.Application.Services
                 skip += range.Count;
                 range = rangeSyncEmailImapInputModel.Skip(skip).Take(count).ToList();
             }
-            
+
             string result = $"{total} messages sync!";
             _logger.LogInformation(result);
             return result;
@@ -92,7 +93,7 @@ namespace MailClient.Application.Services
 
             while (input.EndDate < DateTime.Now)
             {
-                var item = new SyncEmailImapInputModel
+                SyncEmailImapInputModel item = new SyncEmailImapInputModel
                 {
                     User = input.User,
                     Password = input.Password,
@@ -144,22 +145,15 @@ namespace MailClient.Application.Services
         {
             folder.Open(FolderAccess.ReadOnly);
 
-            var deliveryAfter = SearchQuery.DeliveredAfter(startDate);
-            var deliveryBefore = SearchQuery.DeliveredBefore(endDate);
-            var uids = folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
-
-            return uids;
-        }
-
-        private void Handle(string inbox, string emailFrom, string subject, string body, DateTime date)
-        {
-            Publish(new InputImapMail(inbox, emailFrom, subject, body, date));
+            DateSearchQuery deliveryAfter = SearchQuery.DeliveredAfter(startDate);
+            DateSearchQuery deliveryBefore = SearchQuery.DeliveredBefore(endDate);
+            return folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
         }
 
         private void Publish(InputImapMail message)
         {
-            using var connection = _factory.CreateConnection();
-            using var channel = connection.CreateModel();
+            using IConnection connection = _factory.CreateConnection();
+            using IModel channel = connection.CreateModel();
 
             channel.QueueDeclare(
                 queue: _configuration.QueueMail,
