@@ -29,45 +29,55 @@ namespace MailClient.Application.Services
 
         public string SyncMessages(SyncEmailImapInputModel input)
         {
-            List<SyncEmailImapInputModel> listSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
+            List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
             var total = 0;
-            var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+            var count = Environment.ProcessorCount;
+            var skip = 0;
 
-            Parallel.ForEach(listSyncEmailImapInputModel, parallelOptions, input =>
+            List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(count).ToList();
+            while (range.Count > 0)
             {
-                using (var client = new ImapClient())
+                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = count };
+
+                Parallel.ForEach(range, parallelOptions, input =>
                 {
-                    client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
-                    _logger.LogInformation($"Client Connected.");
-
-                    try
+                    using (var client = new ImapClient())
                     {
-                        client.Authenticate(input.User, input.Password);
-                        _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
+                        client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
+                        _logger.LogInformation($"Client Connected.");
 
-                        var inbox = client.Inbox;
-                        var uids = GetUids(input.StartDate, input.EndDate, inbox);
-                        _logger.LogInformation($"{uids.Count} messages find.");
-
-                        foreach (var uid in uids)
+                        try
                         {
-                            var message = inbox.GetMessage(uid);
-                            Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
-                            total++;
+                            client.Authenticate(input.User, input.Password);
+                            _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
+
+                            var inbox = client.Inbox;
+                            var uids = GetUids(input.StartDate, input.EndDate, inbox);
+                            _logger.LogInformation($"{uids.Count} messages find.");
+
+                            foreach (var uid in uids)
+                            {
+                                var message = inbox.GetMessage(uid);
+                                Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
+                                total++;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        var error = $"Erro to sync messages: {ex.Message}";
-                        _logger.LogError($"Erro: {error}.");
-                    }
+                        catch (Exception ex)
+                        {
+                            var error = $"Erro to sync messages: {ex.Message}";
+                            _logger.LogError($"Erro: {error}.");
+                        }
 
-                    client.Disconnect(true);
-                    _logger.LogInformation($"Client disconnected.");
-                }
-            });
+                        client.Disconnect(true);
+                        _logger.LogInformation($"Client disconnected.");
+                    }
+                });
 
+                skip += range.Count;
+                range = rangeSyncEmailImapInputModel.Skip(skip).Take(count).ToList();
+            }
+            
             string result = $"{total} messages sync!";
             _logger.LogInformation(result);
             return result;
@@ -103,31 +113,26 @@ namespace MailClient.Application.Services
 
         private double GetDays(DateTime date)
         {
-            double days = 3;
+            double days = 2;
 
-            DateTime first = DateTime.Now.AddDays(-30);
-            DateTime second = DateTime.Now.AddDays(-60);
-            DateTime third = DateTime.Now.AddDays(-120);
-            DateTime fourth = DateTime.Now.AddDays(-180);
-            DateTime fifth = DateTime.Now.AddDays(-240);
+            DateTime first = DateTime.Now.AddDays(-60);
+            DateTime second = DateTime.Now.AddDays(-120);
+            DateTime third = DateTime.Now.AddDays(-240);
+            DateTime fourth = DateTime.Now.AddDays(-360);
 
             if (date < first && date > second)
             {
-                days = 5;
+                days = 3;
             }
             else if (date < second && date > third)
             {
-                days = 10;
+                days = 6;
             }
             else if (date < third && date > fourth)
             {
-                days = 15;
+                days = 12;
             }
-            else if (date < fourth && date > fifth)
-            {
-                days = 20;
-            }
-            else if (date < fifth)
+            else if (date < fourth)
             {
                 days = 30;
             }
