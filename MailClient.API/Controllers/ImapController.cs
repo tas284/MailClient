@@ -18,7 +18,7 @@ namespace MailClient.Application.Controllers
         [HttpPost]
         public IActionResult SyncMessages([FromBody] SyncEmailImapInputModel inputModel)
         {
-            var result = _service.SyncMessages(inputModel);
+            string result = _service.SyncMessages(inputModel);
             return Ok(result);
         }
     }
