@@ -1,0 +1,47 @@
+### Email GET
+GET https://localhost:7175/api/Email/GetById/672415c39b31f0bd833c61d9 HTTP/1.1
+Content-Type: application/json
+
+### Email GET All
+GET https://localhost:7175/api/Email/GetAll HTTP/1.1
+Content-Type: application/json
+
+### Email DELETE By Id
+DELETE https://localhost:7175/api/Email/DeleteById/672415c39b31f0bd833c61ca HTTP/1.1
+Content-Type: application/json
+
+### Email DELETE All
+DELETE https://localhost:7175/api/Email/DeleteAll HTTP/1.1
+Content-Type: application/json
+
+
+### Imap Get All Emails from initial date
+POST https://localhost:7175/api/Imap HTTP/1.1
+Content-Type: application/json
+
+{
+  "user": "john@doe.com",
+  "password": "mypassword",
+  "imapAddress": "imap.doe.com",
+  "imapPort": 993,
+  "startDate": "2020-01-05T13:55:58.000Z",
+  "endDate": "2024-11-01T02:17:37.267Z"
+}
+
+### Smtp Send email message via API
+POST https://localhost:7175/api/Smtp HTTP/1.1
+Content-Type: application/json
+
+{
+  "user": "john@doe.com",
+  "password": "mypassword",
+  "fromEmail": "john@doe.com",
+  "fromName": "John Doe",
+  "toEmail": "mary@doe.com",
+  "toName": "Mary Doe",
+  "smtpAddress": "smtp.doe.com",
+  "smtpPort": 587,
+  "subject": "Test email message with C#",
+  "body": "Test email message with C#",
+  "bodyHtml": "<p>Test email message with C#</p>"
+}

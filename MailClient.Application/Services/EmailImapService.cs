@@ -23,63 +23,135 @@ namespace MailClient.Application.Services
         public EmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<EmailImapService> logger)
         {
             _configuration = configuration.Value;
-            _factory = new ConnectionFactory { HostName = _configuration.Host };
+            _factory = new ConnectionFactory { HostName = _configuration.Host, RequestedHeartbeat = TimeSpan.FromSeconds(30), SocketReadTimeout = TimeSpan.FromSeconds(30) };
             _logger = logger;
         }
 
-        public async Task<string> SyncMessages(SyncEmailImapInputModel input)
+        public string SyncMessages(SyncEmailImapInputModel input)
         {
+            List<SyncEmailImapInputModel> listSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
+
             var total = 0;
-            using (var client = new ImapClient())
+            var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+
+            Parallel.ForEach(listSyncEmailImapInputModel, parallelOptions, input =>
             {
-                client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
-
-                try
+                using (var client = new ImapClient())
                 {
-                    client.Authenticate(input.User, input.Password);
-                    _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
+                    client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
+                    _logger.LogInformation($"Client Connected.");
 
-                    var inbox = client.Inbox;
-                    var uids = GetUids(input.DateSync, inbox);
-                    _logger.LogInformation($"{uids.Count} messages find.");
-
-                    foreach (var uid in uids)
+                    try
                     {
-                        var message = inbox.GetMessage(uid);
-                        await Task.Run(() => Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime));
-                        total++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var error = $"Erro to sync messages: {ex.Message}";
-                    _logger.LogError($"Erro: {error}.");
-                    return error;
-                }
+                        client.Authenticate(input.User, input.Password);
+                        _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
 
-                client.Disconnect(true);
-            }
+                        var inbox = client.Inbox;
+                        var uids = GetUids(input.StartDate, input.EndDate, inbox);
+                        _logger.LogInformation($"{uids.Count} messages find.");
+
+                        foreach (var uid in uids)
+                        {
+                            var message = inbox.GetMessage(uid);
+                            Handle(input.User, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
+                            total++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var error = $"Erro to sync messages: {ex.Message}";
+                        _logger.LogError($"Erro: {error}.");
+                    }
+
+                    client.Disconnect(true);
+                    _logger.LogInformation($"Client disconnected.");
+                }
+            });
+
             string result = $"{total} messages sync!";
             _logger.LogInformation(result);
             return result;
         }
 
-        private IList<UniqueId> GetUids(DateTime initial, IMailFolder folder)
+        private List<SyncEmailImapInputModel> GetRangeSyncEmailImapInputModel(SyncEmailImapInputModel input)
+        {
+            List<SyncEmailImapInputModel> listSyncEmailImapInputModel = new();
+            double days = GetDays(input.StartDate);
+
+            input.EndDate = input.StartDate.AddDays(days);
+
+            while (input.EndDate < DateTime.Now)
+            {
+                var item = new SyncEmailImapInputModel
+                {
+                    User = input.User,
+                    Password = input.Password,
+                    ImapAddress = input.ImapAddress,
+                    ImapPort = input.ImapPort,
+                    StartDate = input.StartDate,
+                    EndDate = input.EndDate
+                };
+
+                listSyncEmailImapInputModel.Add(item);
+
+                input.StartDate = input.EndDate;
+                input.EndDate = input.StartDate.AddDays(days);
+            }
+
+            return listSyncEmailImapInputModel;
+        }
+
+        private double GetDays(DateTime date)
+        {
+            double days = 3;
+
+            DateTime first = DateTime.Now.AddDays(-30);
+            DateTime second = DateTime.Now.AddDays(-60);
+            DateTime third = DateTime.Now.AddDays(-120);
+            DateTime fourth = DateTime.Now.AddDays(-180);
+            DateTime fifth = DateTime.Now.AddDays(-240);
+
+            if (date < first && date > second)
+            {
+                days = 5;
+            }
+            else if (date < second && date > third)
+            {
+                days = 10;
+            }
+            else if (date < third && date > fourth)
+            {
+                days = 15;
+            }
+            else if (date < fourth && date > fifth)
+            {
+                days = 20;
+            }
+            else if (date < fifth)
+            {
+                days = 30;
+            }
+
+            return days;
+        }
+
+        private IList<UniqueId> GetUids(DateTime startDate, DateTime endDate, IMailFolder folder)
         {
             folder.Open(FolderAccess.ReadOnly);
 
-            var query = SearchQuery.DeliveredAfter(initial);
-            var uids = folder.Search(query);
+            var deliveryAfter = SearchQuery.DeliveredAfter(startDate);
+            var deliveryBefore = SearchQuery.DeliveredBefore(endDate);
+            var uids = folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
 
             return uids;
         }
 
-        private async void Handle(string inbox, string emailFrom, string subject, string body, DateTime date)
+        private void Handle(string inbox, string emailFrom, string subject, string body, DateTime date)
         {
-            await Publish(new InputImapMail(inbox, emailFrom, subject, body, date));
+            Publish(new InputImapMail(inbox, emailFrom, subject, body, date));
         }
 
-        private async Task Publish(InputImapMail message)
+        private void Publish(InputImapMail message)
         {
             using var connection = _factory.CreateConnection();
             using var channel = connection.CreateModel();
@@ -101,8 +173,6 @@ namespace MailClient.Application.Services
                 body: bytesMessage);
 
             _logger.LogInformation($"Message published on broker: {message.Subject}.");
-
-            await Task.CompletedTask;
         }
     }
 }
