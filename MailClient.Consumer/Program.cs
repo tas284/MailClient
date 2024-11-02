@@ -7,6 +7,7 @@ using MailClient.Infrastructure.Connection;
 using MailClient.Domain.Interfaces;
 using MailClient.Domain.Repositories;
 using MailClient.Infrastructure.Repostitories;
+using MailClient.Consumer.Interfaces;
 
 namespace MailClient
 {
@@ -15,7 +16,7 @@ namespace MailClient
         static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var consumerService = host.Services.GetRequiredService<ConsumerEmailImapService>();
+            var consumerService = host.Services.GetRequiredService<IConsumerEmailImapService>();
 
             await consumerService.ExecuteAsync();
         }
@@ -26,7 +27,7 @@ namespace MailClient
             services.Configure<MongoDBConfiguration>(context.Configuration.GetSection("MongoDBConfiguration"));
             services.AddSingleton<IConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
-            services.AddSingleton<ConsumerEmailImapService>();
+            services.AddSingleton<IConsumerEmailImapService, ConsumerEmailImapService>();
         });
     }
 }
