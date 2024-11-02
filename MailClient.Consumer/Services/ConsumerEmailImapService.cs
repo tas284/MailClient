@@ -8,10 +8,11 @@ using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
+using MailClient.Consumer.Interfaces;
 
 namespace MailClient.Services
 {
-    public class ConsumerEmailImapService
+    public class ConsumerEmailImapService : IConsumerEmailImapService
     {
         private readonly RabbitMqConfiguration _configuration;
         private readonly ConnectionFactory _factory;
@@ -48,7 +49,7 @@ namespace MailClient.Services
             {
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var imapMail = JsonConvert.DeserializeObject<ImapMailModel>(message);
+                var imapMail = JsonConvert.DeserializeObject<ImapMailMessage>(message);
 
                 if (imapMail != null)
                 {
@@ -56,7 +57,7 @@ namespace MailClient.Services
 
                     await _repository.InsertOneAsync(new Email
                     {
-                        Inbox = imapMail.Inbox,
+                        Inbox = imapMail.EmailTo,
                         EmailFrom = imapMail.EmailFrom,
                         Subject = imapMail.Subject,
                         Body = imapMail.Body,

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System.Diagnostics;
 using System.Text;
 
 namespace MailClient.Application.Services
@@ -36,6 +37,9 @@ namespace MailClient.Application.Services
             int skip = 0;
             int count = Environment.ProcessorCount;
             ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = count };
+
+            Stopwatch sw = new();
+            sw.Start();
 
             List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(count).ToList();
             while (range.Count > 0)
@@ -78,8 +82,10 @@ namespace MailClient.Application.Services
                 range = rangeSyncEmailImapInputModel.Skip(skip).Take(count).ToList();
             }
 
-            string result = $"{total} messages sync!";
-            _logger.LogInformation(result);
+            sw.Stop();
+
+            string result = $"{total} messages sync";
+            _logger.LogInformation($"{result} in {sw.ElapsedMilliseconds / 1000} seconds!");
             return result;
         }
 
