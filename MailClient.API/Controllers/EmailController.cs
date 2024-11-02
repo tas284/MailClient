@@ -7,7 +7,7 @@ using MailClient.Application.DTO;
 
 namespace MailClient.Application.Controllers
 {
-    [Route("api/[controller]/[Action]")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class EmailController : ControllerBase
     {
