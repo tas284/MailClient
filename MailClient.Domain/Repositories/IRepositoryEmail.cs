@@ -5,8 +5,9 @@ namespace MailClient.Domain.Repositories
     {
         Task InsertOneAsync(Email entity);
         Task<Email> GetByIdAsync(string id);
-        Task<IEnumerable<Email>> GetAllAsync();
+        Task<IEnumerable<Email>> GetAllAsync(int pageSize, int skip);
         Task<bool> DeleteByIdAsync(string id);
         Task<long> DeleteAllAsync();
+        Task<long> CountAsync();
     }
 }

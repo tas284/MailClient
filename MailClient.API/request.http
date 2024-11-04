@@ -1,9 +1,9 @@
 ### Email GET By Id
-GET https://localhost:7175/api/Email/672667e891265d65b38a807d HTTP/1.1
+GET https://localhost:7175/api/Email/672823e1e2354f61bf37e80b HTTP/1.1
 Content-Type: application/json
 
 ### Email GET All
-GET https://localhost:7175/api/Email/ HTTP/1.1
+GET https://localhost:7175/api/Email?pageSize=10&skip=0 HTTP/1.1
 Content-Type: application/json
 
 ### Email DELETE By Id
