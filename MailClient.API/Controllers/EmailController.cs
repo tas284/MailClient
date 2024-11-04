@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MailClient.Application.Interfaces;
-using System.Collections.Generic;
 using MailClient.Application.DTO;
+using MailClient.Application.Paginator;
 
 namespace MailClient.Application.Controllers
 {
@@ -19,11 +19,11 @@ namespace MailClient.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int skip, int pageSize = 20)
         {
             try
             {
-                IEnumerable<EmailDto> result = await _service.GetAllAsync();
+                EmailPaginator result = await _service.GetAllAsync(skip, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)

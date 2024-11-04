@@ -50,9 +50,9 @@ namespace MailClient.Infrastructure.Repostitories
             }
         }
 
-        public async Task<IEnumerable<Email>> GetAllAsync()
+        public async Task<IEnumerable<Email>> GetAllAsync(int skip, int pageSize)
         {
-            return await _collection.Find(_ => true).ToListAsync();
+            return await _collection.Find(_ => true).SortByDescending(e => e.Date).Skip(skip).Limit(pageSize).ToListAsync();
         }
 
         public async Task<bool> DeleteByIdAsync(string id)
@@ -88,5 +88,7 @@ namespace MailClient.Infrastructure.Repostitories
             FilterDefinition<Email> filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
             return filter;
         }
+
+        public async Task<long> CountAsync() => await _collection.CountDocumentsAsync(_ => true);
     }
 }

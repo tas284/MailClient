@@ -3,6 +3,7 @@ using MailClient.Application.DTO;
 using MailClient.Application.Interfaces;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
+using MailClient.Application.Paginator;
 
 namespace MailClient.Application.Services
 {
@@ -34,13 +35,23 @@ namespace MailClient.Application.Services
             }
         }
 
-        public async Task<IEnumerable<EmailDto>> GetAllAsync()
+        public async Task<EmailPaginator> GetAllAsync(int skip, int pageSize)
         {
             try
             {
-                IEnumerable<Email> entities = await _repository.GetAllAsync();
+                IEnumerable<Email> entities = await _repository.GetAllAsync(skip, pageSize);
                 if (entities == null || !entities.Any()) throw new Exception("No emails found in the database.");
-                return entities.Select(EmailDto.Create);
+
+                long total = await _repository.CountAsync();
+                EmailPaginator emails = new()
+                {
+                    Emails = entities.Select(EmailDto.Create),
+                    PageSize = pageSize,
+                    NextSkip = skip + pageSize > total ? 0 : skip + pageSize,
+                    Total = total
+                };
+
+                return emails;
             }
             catch (Exception ex)
             {
