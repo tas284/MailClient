@@ -47,7 +47,7 @@ namespace MailClient.Application.Services
                 {
                     Emails = entities.Select(EmailDto.Create),
                     PageSize = pageSize,
-                    NextSkip = skip + pageSize > total ? 0 : skip + pageSize,
+                    NextSkip = skip + pageSize >= total ? 0 : skip + pageSize,
                     Total = total
                 };
 
