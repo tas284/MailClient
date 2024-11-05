@@ -35,7 +35,7 @@ namespace MailClient.Application.Services
 
             int total = 0;
             int skip = 0;
-            int count = Environment.ProcessorCount;
+            int count = 12;
             ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = count };
 
             Stopwatch sw = new();
