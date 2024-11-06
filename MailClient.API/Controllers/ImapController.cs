@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MailClient.Application.Interfaces;
 using MailClient.Application.InputModel;
+using System;
 
 namespace MailClient.Application.Controllers
 {
@@ -18,8 +19,15 @@ namespace MailClient.Application.Controllers
         [HttpPost]
         public IActionResult SyncMessages([FromBody] SyncEmailImapInputModel inputModel)
         {
-            string result = _service.SyncMessages(inputModel);
-            return Ok(result);
+            try
+            {
+                string result = _service.SyncMessages(inputModel);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
