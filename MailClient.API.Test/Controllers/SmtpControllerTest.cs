@@ -28,7 +28,7 @@ namespace MailClient.API.Test.Controllers
             };
             string expectedResult = "Email sent successfully";
 
-            _mockService.Setup(_ => _.Send(input)).Returns(expectedResult);
+            _mockService.Setup(service => service.Send(input)).Returns(expectedResult);
 
             var result = _smptController.SendEmail(input);
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -54,7 +54,7 @@ namespace MailClient.API.Test.Controllers
             };
             string expectedMessage = "An error ocurred while send the email";
 
-            _mockService.Setup(_ => _.Send(input)).Throws(new Exception(expectedMessage));
+            _mockService.Setup(service => service.Send(input)).Throws(new Exception(expectedMessage));
 
             var result = _smptController.SendEmail(input);
 
