@@ -1,6 +1,7 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace MailClient.Application.Controllers
 {
@@ -18,8 +19,15 @@ namespace MailClient.Application.Controllers
         [HttpPost]
         public IActionResult SendEmail([FromBody] SendEmailInputModel input)
         {
-            string result = _service.Send(input);
-            return Ok(result);
+            try
+            {
+                string result = _service.Send(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
