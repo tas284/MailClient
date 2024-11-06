@@ -8,37 +8,35 @@ namespace MailClient.API.Test.Controllers
 {
     public class SmtpControllerTest
     {
-        [Fact]
-        public void ShouldSendEmail()
+        private readonly Mock<IEmailSmtpService> _mockService;
+        private readonly SmtpController _smptController;
+
+        public SmtpControllerTest()
         {
-            SendEmailInputModel input = new()
-            {
-                User = "john@doe.com",
-                Password = "john@doe.com",
-                FromEmail = "john@doe.com",
-                FromName = "john@doe.com",
-                ToEmail = "john@doe.com",
-                ToName = "john@doe.com",
-                SmtpAddress = "john@doe.com",
-                SmtpPort = 587,
-                Subject = "john@doe.com",
-                Body = "john@doe.com",
-                BodyHtml = "john@doe.com"
-            };
-
-            Mock<IEmailSmtpService> _serviceMock = new Mock<IEmailSmtpService>();
-            _serviceMock.Setup(_ => _.Send(input)).Returns("Email sent sucessfully");
-
-            SmtpController smtpController = new SmtpController(_serviceMock.Object);
-
-            OkObjectResult result = (OkObjectResult)smtpController.SendEmail(input);
-            Assert.NotNull(result);
-            Assert.Equal(200, result.StatusCode);
-            Assert.Equal(result.Value, "Email sent sucessfully");
+            _mockService = new Mock<IEmailSmtpService>();
+            _smptController = new SmtpController(_mockService.Object);
         }
 
         [Fact]
-        public void ShouldNotSendEmail()
+        public void SendEmail_ReturnsOkResult_WhebnServiceSucceds()
+        {
+            SendEmailInputModel input = new()
+            {
+                ToEmail = "john@doe.com",
+                Subject = "John Doe",
+                Body = "Hello from XUnit Test",
+            };
+            string expectedResult = "Email sent successfully";
+
+            _mockService.Setup(_ => _.Send(input)).Returns(expectedResult);
+
+            var result = _smptController.SendEmail(input);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(expectedResult, okResult.Value);
+        }
+
+        [Fact]
+        public void SendEmail_ReturnsBadRequest_WhenServiceThrowsException()
         {
             SendEmailInputModel input = new()
             {
@@ -54,15 +52,14 @@ namespace MailClient.API.Test.Controllers
                 Body = null,
                 BodyHtml = null,
             };
+            string expectedMessage = "An error ocurred while send the email";
 
-            Mock<IEmailSmtpService> _serviceMock = new Mock<IEmailSmtpService>();
-            _serviceMock.Setup(_ => _.Send(input)).Throws(new Exception("Invalid parameters to send email!"));
-            SmtpController smtpController = new SmtpController(_serviceMock.Object);
+            _mockService.Setup(_ => _.Send(input)).Throws(new Exception(expectedMessage));
 
-            BadRequestObjectResult result = (BadRequestObjectResult) smtpController.SendEmail(input);
-            Assert.NotNull(result);
-            Assert.Equal(400, result.StatusCode);
-            Assert.Equal("Invalid parameters to send email!", result.Value);
+            var result = _smptController.SendEmail(input);
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(expectedMessage, badRequestResult.Value);
         }
     }
 }
