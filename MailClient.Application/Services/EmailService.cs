@@ -4,6 +4,7 @@ using MailClient.Application.Interfaces;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
 using MailClient.Application.Paginator;
+using MailClient.Application.Exceptions;
 
 namespace MailClient.Application.Services
 {
@@ -23,7 +24,7 @@ namespace MailClient.Application.Services
             try
             {
                 Email entity = await _repository.GetByIdAsync(id);
-                if (entity is null) throw new Exception($"Email not found in the database: {id}");
+                if (entity is null) throw new NotFoundException($"Email not found in the database: {id}");
                 EmailDto email = EmailDto.Create(entity);
                 return email;
             }
@@ -31,7 +32,7 @@ namespace MailClient.Application.Services
             {
                 string message = $"An error occurred while retrieving email from database: {ex.Message}";
                 _logger.LogError(message);
-                throw new Exception(message, ex);
+                throw;
             }
         }
 
