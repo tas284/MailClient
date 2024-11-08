@@ -1,6 +1,7 @@
 ﻿using MailClient.Application.Controllers;
 using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -18,7 +19,7 @@ namespace MailClient.API.Test.Controllers
         }
 
         [Fact]
-        public void SendEmail_ReturnsOkResult_WhebnServiceSucceds()
+        public void SendEmail_ReturnsOkResult_WhenServiceSucceds()
         {
             SendEmailInputModel input = new()
             {
@@ -27,18 +28,20 @@ namespace MailClient.API.Test.Controllers
                 Body = "Hello from XUnit Test",
             };
             string expectedResult = "Email sent successfully";
-
             _mockService.Setup(service => service.Send(input)).Returns(expectedResult);
 
-            var result = _smptController.SendEmail(input);
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Equal(expectedResult, okResult.Value);
+            IActionResult result = _smptController.SendEmail(input);
+
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, okObjectResult.StatusCode);
+            Assert.NotNull(okObjectResult);
+            Assert.Equal(expectedResult, okObjectResult.Value);
         }
 
         [Fact]
         public void SendEmail_ReturnsBadRequest_WhenServiceThrowsException()
         {
-            SendEmailInputModel input = new()
+            SendEmailInputModel input = new SendEmailInputModel()
             {
                 User = null,
                 Password = null,
@@ -56,9 +59,11 @@ namespace MailClient.API.Test.Controllers
 
             _mockService.Setup(service => service.Send(input)).Throws(new Exception(expectedMessage));
 
-            var result = _smptController.SendEmail(input);
+            IActionResult result = _smptController.SendEmail(input);
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+            Assert.NotNull(badRequestResult);
             Assert.Equal(expectedMessage, badRequestResult.Value);
         }
     }

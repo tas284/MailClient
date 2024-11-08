@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MailClient.Application.Interfaces;
 using MailClient.Application.DTO;
 using MailClient.Application.Paginator;
+using MailClient.Application.Exceptions;
 
 namespace MailClient.Application.Controllers
 {
@@ -39,6 +40,10 @@ namespace MailClient.Application.Controllers
             {
                 EmailDto result = await _service.GetByIdAsync(id);
                 return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
