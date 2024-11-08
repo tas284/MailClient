@@ -10,33 +10,35 @@ namespace MailClient.Application.Services
     public class EmailSmtpService : IEmailSmtpService
     {
         private readonly ILogger<EmailSmtpService> _logger;
+        private readonly ISmtpClient _smtpClient;
 
-        public EmailSmtpService(ILogger<EmailSmtpService> logger)
+        public EmailSmtpService(ILogger<EmailSmtpService> logger, ISmtpClient smtpClient)
         {
             _logger = logger;
+            _smtpClient = smtpClient;
         }
 
         public string Send(SendEmailInputModel input)
         {
             string result = string.Empty;
-            using (SmtpClient client = new SmtpClient())
+            using (_smtpClient)
             {
                 try
                 {
-                    client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto);
+                    _smtpClient.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto);
 
-                    client.Authenticate(input.User, input.Password);
+                    _smtpClient.Authenticate(input.User, input.Password);
                     _logger.LogInformation($"Email authenticated on: {input.SmtpAddress}:{input.SmtpPort}");
 
                     MimeMessage message = CreateMessage(input);
 
-                    string status = client.Send(message);
+                    string status = _smtpClient.Send(message);
                     _logger.LogInformation($"Result MailKit Send [{status}].");
                     
                     result = $"Email send succesfully to {message.To}.";
                     _logger.LogInformation(result);
 
-                    client.Disconnect(true);
+                    _smtpClient.Disconnect(true);
                 }
                 catch (Exception ex)
                 {

@@ -20,3 +20,5 @@
 /MailClient.API/request.http.rest
 /MailClient.API.Test/bin/Debug/net8.0
 /MailClient.API.Test/obj
+/MailClient.Application.Test/bin/Debug/net8.0
+/MailClient.Application.Test/obj
