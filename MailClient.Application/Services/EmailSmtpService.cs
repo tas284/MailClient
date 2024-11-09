@@ -42,9 +42,8 @@ namespace MailClient.Application.Services
                 }
                 catch (Exception ex)
                 {
-                    var error = $"Error to send email: {ex.Message}.";
-                    _logger.LogError(error);
-                    return error;
+                    _logger.LogError(ex.Message);
+                    return ex.Message;
                 }
             }
 

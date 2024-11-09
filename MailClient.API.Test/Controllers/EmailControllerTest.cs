@@ -51,14 +51,14 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Get All Emails with skip and pageSize null should return badRequest")]
         public async Task GetAllEmails_ReturnsBadRequest_WhenServiceThrowsException()
         {
-            string resultExcpected = "Invalid parameters: skip is null, pageSize is null";
-            _mockService.Setup(service => service.GetAllAsync(It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception(resultExcpected));
+            string expectedResult = "Invalid parameters: skip is null, pageSize is null";
+            _mockService.Setup(service => service.GetAllAsync(It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception(expectedResult));
 
             IActionResult result = await _emailController.GetAll(It.IsAny<int>(), It.IsAny<int>());
 
             BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.NotNull(badRequestObjectResult);
-            Assert.Equal(resultExcpected, badRequestObjectResult.Value);
+            Assert.Equal(expectedResult, badRequestObjectResult.Value);
         }
 
         [Fact(DisplayName = "Get By Id must return a valid email")]
@@ -141,29 +141,29 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Delete all emails should return no emails found if all emails have already been removed")]
         public async Task DeleteAllEmails_ReturnsOkResult_WhenServiceNoFoundEmails()
         {
-            string resultExcpected = "No emails found";
-            _mockService.Setup(service => service.DeleteAllAsync()).ReturnsAsync(resultExcpected);
+            string expectedResult = "No emails found";
+            _mockService.Setup(service => service.DeleteAllAsync()).ReturnsAsync(expectedResult);
 
             IActionResult result = await _emailController.DeleteAll();
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
             Assert.NotNull(okObjectResult);
-            Assert.Equal(resultExcpected, okObjectResult.Value);
+            Assert.Equal(expectedResult, okObjectResult.Value);
         }
 
         [Fact(DisplayName = "Delete All Emails should throws exception if bad request")]
         public async Task DeleteAllEmails_ReturnsBadRequest_WhenServiceThrowsException()
         {
-            string resultExcpected = "No emails found";
-            _mockService.Setup(service => service.DeleteAllAsync()).Throws(new Exception(resultExcpected));
+            string expectedResult = "No emails found";
+            _mockService.Setup(service => service.DeleteAllAsync()).Throws(new Exception(expectedResult));
 
             IActionResult result = await _emailController.DeleteAll();
 
             BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.NotNull(badRequestObjectResult);
-            Assert.Equal(resultExcpected, badRequestObjectResult.Value);
+            Assert.Equal(expectedResult, badRequestObjectResult.Value);
         }
     }
 }
