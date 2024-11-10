@@ -20,9 +20,9 @@ namespace MailClient.Application.Services
 
         public string Send(SendEmailInputModel input)
         {
-            if (input.IsInvalid())
+            if (!input.IsValid())
             {
-                return input.Validations;
+                throw new ArgumentException(input.Validations);
             }
 
             string result = SendEmail(input);

@@ -19,7 +19,7 @@ namespace MailClient.Application.InputModel
 
         [JsonIgnore]
         public string Validations { get; set; }
-        public bool IsInvalid()
+        public bool IsValid()
         {
             if (string.IsNullOrEmpty(SmtpAddress) || SmtpPort <= 0)
                 Validations = "Invalid SMTP:PORT Adrress";
@@ -39,7 +39,7 @@ namespace MailClient.Application.InputModel
             if (string.IsNullOrEmpty(Body) && string.IsNullOrEmpty(BodyHtml))
                 Validations = "At least one body (text or HTML) must be provided";
 
-            return !string.IsNullOrEmpty(Validations);
+            return string.IsNullOrEmpty(Validations);
         }
 
         private bool IsValidEmail(string email)

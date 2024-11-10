@@ -22,14 +22,14 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Get All Emails should return all emails according to the given skip and pageSize")]
         public async Task GetAllEmails_ReturnsOkResult_WhenServiceSucceds()
         {
-            int pageSize = 10;
-            int skip = 10;
+            int pageSize = 1000;
+            int skip = 0;
             var emails = Enumerable.Range(0, pageSize).Select(i => new EmailDto($"email - {i}", $"from{i}@email.com", $"to{i}@email.com", $"Subject - {i}", $"Body{i}", DateTime.Now.AddMinutes(-i)));
             EmailPaginator expectedResult = new()
             {
                 PageSize = pageSize,
                 NextSkip = skip + pageSize,
-                Total = pageSize,
+                Total = emails.Count(),
                 Emails = emails
             };
             _mockService.Setup(service => service.GetAllAsync(skip, pageSize)).ReturnsAsync(expectedResult);
@@ -44,7 +44,8 @@ namespace MailClient.API.Test.Controllers
             Assert.NotNull(actualResult);
             Assert.Equal(pageSize, actualResult.PageSize);
             Assert.Equal(skip + pageSize, actualResult.NextSkip);
-            Assert.Equal(skip, actualResult.Total);
+            Assert.NotEqual(0, actualResult.Total);
+            Assert.Equal(emails.Count(), actualResult.Total);
             Assert.True(actualResult.Emails.Any());
         }
 
@@ -70,7 +71,7 @@ namespace MailClient.API.Test.Controllers
 
             IActionResult result = await _emailController.GetById(id);
 
-            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+            OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             var actualResult = okObjectResult.Value as EmailDto;
             Assert.Equal(200, okObjectResult.StatusCode);
             Assert.NotNull(okObjectResult);
