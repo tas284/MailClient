@@ -42,33 +42,23 @@ namespace MailClient.Application.Test.Services
         [Fact(DisplayName = "Send Should Trows Exception When Email Sent With Invalid Smtp Address or Port invalid")]
         public void Send_ShouldTrowsException_WhenEmailSentWithInvalidSmtpAddressOrPortInvalid()
         {
-            SendEmailInputModel input = new SendEmailInputModel
-            {
-                SmtpAddress = null,
-                SmtpPort = 0
-            };
-            string expectecResult = "Error to send email: Invalid smtp address and port";
-
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Throws(new Exception(expectecResult));
+            SendEmailInputModel input = GetSendEmailInputModel();
+            input.SmtpAddress = null;
+            input.SmtpPort = 0;
+            string expectecResult = "Invalid SMTP:PORT Adrress";
 
             string result = _emailSmtpService.Send(input);
 
             Assert.Equal(expectecResult, result);
             Assert.NotNull(result);
-
         }
 
         [Fact(DisplayName = "Send Should Trows Exception When Email Sent With Invalid User or Password invalid")]
         public void Send_ShouldTrowsException_WhenEmailSentWithInvalidUserOrPassworedInvalid()
         {
-            SendEmailInputModel input = new SendEmailInputModel
-            {
-                User = null,
-                Password = null,
-            };
-            string expectecResult = "Error to send email: Invalid user or password";
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Verifiable();
-            _mockSmtpClient.Setup(client => client.Authenticate(input.User, input.Password, new CancellationToken())).Throws(new Exception(expectecResult));
+            SendEmailInputModel input = GetSendEmailInputModel();
+            input.User = input.Password = null;
+            string expectecResult = "Invalid user and password";
 
             string result = _emailSmtpService.Send(input);
 
@@ -81,10 +71,7 @@ namespace MailClient.Application.Test.Services
         {
             SendEmailInputModel input = GetSendEmailInputModel();
             input.FromEmail = input.FromName = null;
-            string expectecResult = "Value cannot be null. (Parameter 'address')";
-
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Verifiable();
-            _mockSmtpClient.Setup(client => client.Authenticate(input.User, input.Password, new CancellationToken())).Verifiable();
+            string expectecResult = "Invalid sender email address";
 
             string result = _emailSmtpService.Send(input);
 
@@ -97,10 +84,7 @@ namespace MailClient.Application.Test.Services
         {
             SendEmailInputModel input = GetSendEmailInputModel();
             input.ToEmail = input.ToName = null;
-            string expectecResult = "Value cannot be null. (Parameter 'address')";
-
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Verifiable();
-            _mockSmtpClient.Setup(client => client.Authenticate(input.User, input.Password, new CancellationToken())).Verifiable();
+            string expectecResult = "Invalid recipient email address";
 
             string result = _emailSmtpService.Send(input);
 
@@ -113,10 +97,7 @@ namespace MailClient.Application.Test.Services
         {
             SendEmailInputModel input = GetSendEmailInputModel();
             input.Subject = null;
-            string expectecResult = "Value cannot be null. (Parameter 'value')";
-
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Verifiable();
-            _mockSmtpClient.Setup(client => client.Authenticate(input.User, input.Password, new CancellationToken())).Verifiable();
+            string expectecResult = "Subject cannot be empty";
 
             string result = _emailSmtpService.Send(input);
 
@@ -129,10 +110,7 @@ namespace MailClient.Application.Test.Services
         {
             SendEmailInputModel input = GetSendEmailInputModel();
             input.Body = input.BodyHtml = null;
-            string expectecResult = "Value cannot be null. (Parameter 'text')";
-
-            _mockSmtpClient.Setup(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken())).Verifiable();
-            _mockSmtpClient.Setup(client => client.Authenticate(input.User, input.Password, new CancellationToken())).Verifiable();
+            string expectecResult = "At least one body (text or HTML) must be provided";
 
             string result = _emailSmtpService.Send(input);
 

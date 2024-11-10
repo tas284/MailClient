@@ -20,6 +20,17 @@ namespace MailClient.Application.Services
 
         public string Send(SendEmailInputModel input)
         {
+            if (input.IsInvalid())
+            {
+                return input.Validations;
+            }
+
+            string result = SendEmail(input);
+            return result;
+        }
+
+        private string SendEmail(SendEmailInputModel input)
+        {
             string result = string.Empty;
             using (_smtpClient)
             {
@@ -34,7 +45,7 @@ namespace MailClient.Application.Services
 
                     string status = _smtpClient.Send(message);
                     _logger.LogInformation($"Result MailKit Send [{status}].");
-                    
+
                     result = $"Email send succesfully to {message.To}.";
                     _logger.LogInformation(result);
 
