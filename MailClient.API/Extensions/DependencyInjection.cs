@@ -6,6 +6,7 @@ using MailClient.Domain.Repositories;
 using MailClient.Infrastructure.Configuration;
 using MailClient.Infrastructure.Connection;
 using MailClient.Infrastructure.Repostitories;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,6 +27,7 @@ namespace MailClient.Application.Extensions
         {
             services.AddSingleton<IConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
+            services.AddTransient<ISmtpClient, SmtpClient>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailImapService, EmailImapService>();
             services.AddScoped<IEmailSmtpService, EmailSmtpService>();
