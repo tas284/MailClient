@@ -1,4 +1,5 @@
 ﻿using MailClient.Infrastructure.Configuration;
+using MailClient.Infrastructure.Factory;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Infrastructure.Model;
 using Microsoft.Extensions.Logging;
@@ -17,8 +18,8 @@ namespace MailClient.Infrastructure.Publishers
 
         public RabbitMqPublisher(IOptions<RabbitMqConfiguration> configuration, ILogger<RabbitMqPublisher> logger)
         {
+            _factory = RabbitMqFactory.CreateConnection(configuration.Value);
             _configuration = configuration.Value;
-            _factory = new ConnectionFactory { HostName = _configuration.Host, RequestedHeartbeat = TimeSpan.FromSeconds(30), SocketReadTimeout = TimeSpan.FromSeconds(30) };
             _logger = logger;
         }
 

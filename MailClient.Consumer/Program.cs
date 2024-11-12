@@ -5,8 +5,8 @@ using MailClient.Infrastructure.Configuration;
 using MailClient.Infrastructure.Connection;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Domain.Repositories;
-using MailClient.Infrastructure.Repositories;
 using MailClient.Consumer.Interfaces;
+using MailClient.Infrastructure.Repositories;
 
 namespace MailClient
 {
