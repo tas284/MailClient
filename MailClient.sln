@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.API.Test", "Mail
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.Application.Test", "MailClient.Application.Test\MailClient.Application.Test.csproj", "{1AFBA641-7B50-4CF0-8B2B-ABCB72704E65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailClient.IoC", "MailClient.IoC\MailClient.IoC.csproj", "{10D548E6-44F6-4ECA-9F46-1314F53CADEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailClient.IoC", "MailClient.IoC\MailClient.IoC.csproj", "{10D548E6-44F6-4ECA-9F46-1314F53CADEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -9,6 +9,7 @@ using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
 using MailClient.Consumer.Interfaces;
 using MailClient.Infrastructure.Configuration;
+using MailClient.Infrastructure.Factory;
 
 namespace MailClient.Services
 {
@@ -21,8 +22,8 @@ namespace MailClient.Services
 
         public ConsumerEmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<ConsumerEmailImapService> logger, IRepositoryEmail repository)
         {
+            _factory = RabbitMqFactory.CreateConnection(configuration.Value);
             _configuration = configuration.Value;
-            _factory = new ConnectionFactory { HostName = _configuration.Host };
             _logger = logger;
             _repository = repository;
         }
