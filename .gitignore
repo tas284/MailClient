@@ -7,6 +7,7 @@
 /MailClient.API/bin/Debug/net8.0
 /MailClient.Consumer/bin/Debug/net8.0
 /MailClient.Consumer/obj
+<<<<<<< Updated upstream
 /MailClient.Infrastructure/obj
 /MailClient.Teste/bin/Debug/net8.0
 /MailClient.Teste/obj
@@ -22,5 +23,18 @@
 /MailClient.API.Test/obj
 /MailClient.Application.Test/bin/Debug/net8.0
 /MailClient.Application.Test/obj
+=======
+/MailClient.API.Test/bin/Debug/net8.0
+/MailClient.API.Test/obj
+/MailClient.Application/bin/Debug/net8.0
+/MailClient.Application/obj
+/MailClient.Application.Test/bin/Debug/net8.0
+/MailClient.Application.Test/obj
+/MailClient.Domain/bin/Debug/net8.0
+/MailClient.Domain/obj
+/MailClient.Infrastructure/bin/Debug/net8.0
+/MailClient.Infrastructure/obj/Debug/net8.0
+/MailClient.Infrastructure/obj
+>>>>>>> Stashed changes
 /MailClient.IoC/bin/Debug/net8.0
 /MailClient.IoC/obj

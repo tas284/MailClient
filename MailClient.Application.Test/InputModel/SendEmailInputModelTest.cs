@@ -8,7 +8,11 @@ namespace MailClient.Application.Test.InputModel
     {
         public SendEmailInputModelTest() { }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return Success When SendEmailInputModel is Valid")]
+=======
+        [Fact(DisplayName = "Send should return success when SendEmailInputModel is Valid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnTrue_WhenSendEmailInputModelIsValid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -19,7 +23,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.True(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When Smpt Address Or Smtp Port is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when Smpt Address Or Smtp Port is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenSmptAddressOrSmtpPortIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -33,7 +41,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When User or Password is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when User or Password is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenUserOrPasswordIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -46,7 +58,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When To Email Or To Name is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when To Email or To Name is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenToEmailOrToNameIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -59,7 +75,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When From Email Or From Name is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when From Email or From Name is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenFromEmailOrFromIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -72,7 +92,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When Subject is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when Subject is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenSubjectIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
@@ -85,7 +109,11 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Send Should Return False When Body is Invalid")]
+=======
+        [Fact(DisplayName = "Send should return false when Body is Invalid")]
+>>>>>>> Stashed changes
         public void IsValid_ShouldReturnFalse_WhenBodyIsInvalid()
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
