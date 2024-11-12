@@ -4,11 +4,11 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using Newtonsoft.Json;
 using System.Text;
-using MailClient.Consumer.Configuration;
 using MailClient.Consumer.Model;
 using MailClient.Domain.Repositories;
 using MailClient.Domain.Entities;
 using MailClient.Consumer.Interfaces;
+using MailClient.Infrastructure.Configuration;
 
 namespace MailClient.Services
 {

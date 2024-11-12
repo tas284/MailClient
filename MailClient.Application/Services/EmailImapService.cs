@@ -1,36 +1,32 @@
-﻿using MailClient.Application.Configuration;
-using MailClient.Application.InputModel;
+﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
-using MailClient.Application.Model;
+using MailClient.Infrastructure.Interfaces;
+using MailClient.Infrastructure.Model;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using MimeKit;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
 using System.Diagnostics;
-using System.Text;
 
 namespace MailClient.Application.Services
 {
     public class EmailImapService : IEmailImapService
     {
-        private readonly RabbitMqConfiguration _configuration;
-        private readonly ConnectionFactory _factory;
+        private readonly IPublisher _publisher;
         private readonly ILogger<EmailImapService> _logger;
 
-        public EmailImapService(IOptions<RabbitMqConfiguration> configuration, ILogger<EmailImapService> logger)
+        public EmailImapService(IPublisher publisher, ILogger<EmailImapService> logger)
         {
-            _configuration = configuration.Value;
-            _factory = new ConnectionFactory { HostName = _configuration.Host, RequestedHeartbeat = TimeSpan.FromSeconds(30), SocketReadTimeout = TimeSpan.FromSeconds(30) };
+            _publisher = publisher;
             _logger = logger;
         }
 
         public string SyncMessages(SyncEmailImapInputModel input)
         {
+            if (!@input.IsValid()) throw new ArgumentException(input.Validations);
+
             List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
             int total = 0;
@@ -63,7 +59,7 @@ namespace MailClient.Application.Services
                             foreach (var uid in uids)
                             {
                                 MimeMessage message = inbox.GetMessage(uid);
-                                Publish(ImapMailMessage.Create(message));
+                                _publisher.Publish(ImapMailMessage.Create(message));
                                 total++;
                             }
                         }
@@ -153,30 +149,6 @@ namespace MailClient.Application.Services
             DateSearchQuery deliveryAfter = SearchQuery.DeliveredAfter(startDate);
             DateSearchQuery deliveryBefore = SearchQuery.DeliveredBefore(endDate);
             return folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
-        }
-
-        private void Publish(ImapMailMessage message)
-        {
-            using IConnection connection = _factory.CreateConnection();
-            using IModel channel = connection.CreateModel();
-
-            channel.QueueDeclare(
-                queue: _configuration.QueueMail,
-                durable: false,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-
-            string stringifiedMessage = JsonConvert.SerializeObject(message);
-            byte[] bytesMessage = Encoding.UTF8.GetBytes(stringifiedMessage);
-
-            channel.BasicPublish(
-                exchange: "",
-                routingKey: _configuration.QueueMail,
-                basicProperties: null,
-                body: bytesMessage);
-
-            _logger.LogInformation($"Message published on broker: {message.Subject}.");
         }
     }
 }

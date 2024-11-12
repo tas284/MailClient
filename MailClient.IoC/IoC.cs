@@ -1,21 +1,21 @@
-﻿using MailClient.Application.Configuration;
-using MailClient.Application.Interfaces;
+﻿using MailClient.Application.Interfaces;
 using MailClient.Application.Services;
-using MailClient.Domain.Interfaces;
 using MailClient.Domain.Repositories;
 using MailClient.Infrastructure.Configuration;
 using MailClient.Infrastructure.Connection;
-using MailClient.Infrastructure.Repostitories;
+using MailClient.Infrastructure.Interfaces;
+using MailClient.Infrastructure.Publishers;
+using MailClient.Infrastructure.Repositories;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace MailClient.Application.Extensions
+namespace MailClient.IoC
 {
-    public static class DependencyInjection
+    public static class IoC
     {
-        public static IHostApplicationBuilder Setup(this IHostApplicationBuilder builder)
+        public static IHostApplicationBuilder ConfigureApp(this IHostApplicationBuilder builder)
         {
             builder.Services.AddConfigurationRabbitMq(builder.Configuration);
             builder.Services.AddMongoDBConfiguration(builder.Configuration);
@@ -25,9 +25,10 @@ namespace MailClient.Application.Extensions
 
         private static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddSingleton<IConnection, MongoDBConnection>();
+            services.AddSingleton<IDBConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
-            services.AddTransient<ISmtpClient, SmtpClient>();
+            services.AddScoped<IPublisher, RabbitMqPublisher>();
+            services.AddScoped<ISmtpClient, SmtpClient>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailImapService, EmailImapService>();
             services.AddScoped<IEmailSmtpService, EmailSmtpService>();

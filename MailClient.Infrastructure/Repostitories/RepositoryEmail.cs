@@ -2,20 +2,20 @@
 using MongoDB.Driver;
 using DnsClient.Internal;
 using MailClient.Domain.Entities;
-using MailClient.Domain.Interfaces;
 using MailClient.Domain.Repositories;
 using Microsoft.Extensions.Logging;
+using MailClient.Infrastructure.Interfaces;
 
-namespace MailClient.Infrastructure.Repostitories
+namespace MailClient.Infrastructure.Repositories
 {
     public class RepositoryEmail : IRepositoryEmail
     {
         private readonly string Name = "Email";
-        private readonly IConnection _connection;
+        private readonly IDBConnection _connection;
         private readonly IMongoCollection<Email> _collection;
         private readonly ILogger<RepositoryEmail> _logger;
 
-        public RepositoryEmail(IConnection connection, ILogger<RepositoryEmail> logger)
+        public RepositoryEmail(IDBConnection connection, ILogger<RepositoryEmail> logger)
         {
             _logger = logger;
             _connection = connection;

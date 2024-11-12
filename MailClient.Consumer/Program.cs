@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MailClient.Consumer.Configuration;
 using MailClient.Services;
 using MailClient.Infrastructure.Configuration;
 using MailClient.Infrastructure.Connection;
-using MailClient.Domain.Interfaces;
+using MailClient.Infrastructure.Interfaces;
 using MailClient.Domain.Repositories;
-using MailClient.Infrastructure.Repostitories;
+using MailClient.Infrastructure.Repositories;
 using MailClient.Consumer.Interfaces;
 
 namespace MailClient
@@ -25,7 +24,7 @@ namespace MailClient
         {
             services.Configure<RabbitMqConfiguration>(context.Configuration.GetSection("RabbitMqConfiguration"));
             services.Configure<MongoDBConfiguration>(context.Configuration.GetSection("MongoDBConfiguration"));
-            services.AddSingleton<IConnection, MongoDBConnection>();
+            services.AddSingleton<IDBConnection, MongoDBConnection>();
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
             services.AddSingleton<IConsumerEmailImapService, ConsumerEmailImapService>();
         });

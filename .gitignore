@@ -22,3 +22,5 @@
 /MailClient.API.Test/obj
 /MailClient.Application.Test/bin/Debug/net8.0
 /MailClient.Application.Test/obj
+/MailClient.IoC/bin/Debug/net8.0
+/MailClient.IoC/obj
