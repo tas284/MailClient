@@ -21,11 +21,7 @@ namespace MailClient.Application.Test.Services
             _emailSmtpService = new EmailSmtpService(_mockLogger.Object, _mockSmtpClient.Object);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Return Success When Email Sent Successfully")]
-=======
         [Fact(DisplayName = "Send should return success when EmailSend successfully")]
->>>>>>> Stashed changes
         public void Send_ShouldReturnSuccess_WhenEmailSentSuccessfully()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -43,11 +39,7 @@ namespace MailClient.Application.Test.Services
             _mockSmtpClient.Verify(client => client.Disconnect(It.IsAny<bool>(), new CancellationToken()), Times.Once);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException When Email Sent With Invalid Smtp Address or Port invalid")]
-=======
         [Fact(DisplayName = "Send should trows argument exception when Smtp Address or Port is invalid")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenEmailSentWithInvalidSmtpAddressOrPortInvalid()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -61,11 +53,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(exception);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException When Email Sent With Invalid User or Password invalid")]
-=======
         [Fact(DisplayName = "Send should trows argument exception when User or Password is invalid")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenEmailSentWithInvalidUserOrPassworedInvalid()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -78,11 +66,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(exception);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException if FromEmail invalid for CreateMessage")]
-=======
         [Fact(DisplayName = "Send should trows argument exception if FromEmail invalid for CreateMessage")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenFromEmailInvalidForCreateMessage()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -95,11 +79,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(exception);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException if ToEmail invalid for CreateMessage")]
-=======
         [Fact(DisplayName = "Send should trows argument exception if ToEmail invalid for CreateMessage")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenToEmailInvalidForCreateMessage()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -112,11 +92,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(exception);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException if Subject invalid for CreateMessage")]
-=======
         [Fact(DisplayName = "Send should trows argument exception if Subject invalid for CreateMessage")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenSubjectInvalidForCreateMessage()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
@@ -129,11 +105,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(exception);
         }
 
-<<<<<<< Updated upstream
-        [Fact(DisplayName = "Send Should Trows ArgumentException if Body invalid for CreateBody")]
-=======
         [Fact(DisplayName = "Send should trows argument exception if Body invalid for CreateBody")]
->>>>>>> Stashed changes
         public void Send_ShouldTrowsArgumentException_WhenBodyInvalidForCreateBody()
         {
             SendEmailInputModel input = GetSendEmailInputModel();
