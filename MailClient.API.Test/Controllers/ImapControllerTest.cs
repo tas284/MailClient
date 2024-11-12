@@ -17,11 +17,7 @@ namespace MailClient.API.Test.Controllers
             _imapController = new ImapController(_mockService.Object);
         }
 
-<<<<<<< Updated upstream
-        [Fact]
-=======
         [Fact(DisplayName = "Sync Messages should returns ok result when service succeds")]
->>>>>>> Stashed changes
         public void SyncMessages_ReturnsOkResult_WhenServiceSucceds()
         {
             SyncEmailImapInputModel input = new SyncEmailImapInputModel
@@ -41,11 +37,7 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult, okObjectResult.Value);
         }
 
-<<<<<<< Updated upstream
-        [Fact]
-=======
         [Fact(DisplayName = "Sync Messages should returns bad request when service throws exception")]
->>>>>>> Stashed changes
         public void SyncMessages_ReturnsBadRequest_WhenServiceThrowsException()
         {
             SyncEmailImapInputModel input = new SyncEmailImapInputModel
