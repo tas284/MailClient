@@ -1,12 +1,11 @@
 ﻿using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 using MailClient.Infrastructure.Configuration;
-using MailClient.Domain.Interfaces;
 using MailClient.Infrastructure.Interfaces;
 
 namespace MailClient.Infrastructure.Connection
 {
-    public class MongoDBConnection : IConnection
+    public class MongoDBConnection : IDBConnection
     {
         private readonly MongoDBConfiguration _configuration;
         private readonly MongoClient _client;

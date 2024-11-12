@@ -1,6 +1,6 @@
 ﻿using MimeKit;
 
-namespace MailClient.Application.Model
+namespace MailClient.Infrastructure.Model
 {
     public record ImapMailMessage(string EmailTo, string EmailFrom, string Subject, string Body, DateTime Date)
     {
