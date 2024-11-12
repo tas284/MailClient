@@ -18,7 +18,11 @@ namespace MailClient.API.Test.Controllers
             _smptController = new SmtpController(_mockService.Object);
         }
 
+<<<<<<< Updated upstream
         [Fact]
+=======
+        [Fact(DisplayName = "Send Email should returns ok result when service succeds")]
+>>>>>>> Stashed changes
         public void SendEmail_ReturnsOkResult_WhenServiceSucceds()
         {
             SendEmailInputModel input = new()
@@ -38,7 +42,11 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult, okObjectResult.Value);
         }
 
+<<<<<<< Updated upstream
         [Fact]
+=======
+        [Fact(DisplayName = "Send Email should returns bad request when service throws exception")]
+>>>>>>> Stashed changes
         public void SendEmail_ReturnsBadRequest_WhenServiceThrowsException()
         {
             SendEmailInputModel input = new SendEmailInputModel()

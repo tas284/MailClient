@@ -49,7 +49,11 @@ namespace MailClient.API.Test.Controllers
             Assert.True(actualResult.Emails.Any());
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Get All Emails with skip and pageSize null should return badRequest")]
+=======
+        [Fact(DisplayName = "Get All Emails with skip and pageSize null should return bad request")]
+>>>>>>> Stashed changes
         public async Task GetAllEmails_ReturnsBadRequest_WhenServiceThrowsException()
         {
             string expectedResult = "Invalid parameters: skip is null, pageSize is null";
@@ -62,7 +66,11 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult, badRequestObjectResult.Value);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Get By Id must return a valid email")]
+=======
+        [Fact(DisplayName = "Get By Id should return a valid email")]
+>>>>>>> Stashed changes
         public async Task GetById_ReturnsOkResult_WhenServiceSucceds()
         {
             string id = Guid.NewGuid().ToString();
@@ -85,7 +93,11 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult.date, actualResult.date);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Get By Empty Id throws Exception")]
+=======
+        [Fact(DisplayName = "Get By Id if parameter is empty should return throws exception")]
+>>>>>>> Stashed changes
         public async Task GetById_ReturnsBadRequest_WhenServiceThrowsException()
         {
             string id = string.Empty;
@@ -100,7 +112,11 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult, badRequestObjectResult.Value);
         }
 
+<<<<<<< Updated upstream
         [Fact(DisplayName = "Delete By Id must return Ok when passing a valid id and it is deleted")]
+=======
+        [Fact(DisplayName = "Delete By Id should return ok when passing a valid id and it is deleted")]
+>>>>>>> Stashed changes
         public async Task DeleteById_ReturnsOkObjectResult_WhenServiceSucceds()
         {
             string id = Guid.NewGuid().ToString();
