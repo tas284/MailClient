@@ -19,6 +19,7 @@ namespace MailClient.Application.InputModel
 
         [JsonIgnore]
         public string Validations { get; set; }
+
         public bool IsValid()
         {
             if (string.IsNullOrEmpty(SmtpAddress) || SmtpPort <= 0)

@@ -25,7 +25,7 @@ namespace MailClient.Application.Services
 
         public string SyncMessages(SyncEmailImapInputModel input)
         {
-            if (!@input.IsValid()) throw new ArgumentException(input.Validations);
+            if (!input.IsValid()) throw new ArgumentException(input.Validations);
 
             List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
