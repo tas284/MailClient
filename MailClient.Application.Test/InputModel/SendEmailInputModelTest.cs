@@ -85,7 +85,6 @@ namespace MailClient.Application.Test.InputModel
             Assert.False(isValid);
         }
 
-
         [Fact(DisplayName = "Send should return false when Body is Invalid")]
         public void IsValid_ShouldReturnFalse_WhenBodyIsInvalid()
         {

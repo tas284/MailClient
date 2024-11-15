@@ -3,6 +3,7 @@ using MailClient.Application.DTO;
 using MailClient.Application.Exceptions;
 using MailClient.Application.Interfaces;
 using MailClient.Application.Paginator;
+using MailClient.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -22,16 +23,11 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Get All Emails should return all emails according to the given skip and pageSize")]
         public async Task GetAllEmails_ReturnsOkResult_WhenServiceSucceds()
         {
-            int pageSize = 1000;
+            int pageSize = 100;
             int skip = 0;
-            var emails = Enumerable.Range(0, pageSize).Select(i => new EmailDto($"email - {i}", $"from{i}@email.com", $"to{i}@email.com", $"Subject - {i}", $"Body{i}", DateTime.Now.AddMinutes(-i)));
-            EmailPaginator expectedResult = new()
-            {
-                PageSize = pageSize,
-                NextSkip = skip + pageSize,
-                Total = emails.Count(),
-                Emails = emails
-            };
+            int total = 1000;
+            int nextSkip = skip + pageSize >= total ? 0 : skip + pageSize;
+            var expectedResult = GetEmailPaginator(pageSize, skip, total);
             _mockService.Setup(service => service.GetAllAsync(skip, pageSize)).ReturnsAsync(expectedResult);
 
             IActionResult result = await _emailController.GetAll(skip, pageSize);
@@ -43,9 +39,9 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(expectedResult, okObjectResult.Value);
             Assert.NotNull(actualResult);
             Assert.Equal(pageSize, actualResult.PageSize);
-            Assert.Equal(skip + pageSize, actualResult.NextSkip);
+            Assert.Equal(nextSkip, actualResult.NextSkip);
             Assert.NotEqual(0, actualResult.Total);
-            Assert.Equal(emails.Count(), actualResult.Total);
+            Assert.Equal(total, actualResult.Total);
             Assert.True(actualResult.Emails.Any());
         }
 
@@ -165,6 +161,12 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(400, badRequestObjectResult.StatusCode);
             Assert.NotNull(badRequestObjectResult);
             Assert.Equal(expectedResult, badRequestObjectResult.Value);
+        }
+
+        private EmailPaginator GetEmailPaginator(int pageSize, int skip, int total)
+        {
+            var emails = Enumerable.Range(0, pageSize).Select(i => new Email { Id = new MongoDB.Bson.ObjectId(), Inbox = $"to{i}@email.com", EmailFrom = $"from{i}@email.com", Subject = $"Subject - {i}", Body = $"Body{i}" });
+            return new EmailPaginator(emails, pageSize, skip, total);
         }
     }
 }

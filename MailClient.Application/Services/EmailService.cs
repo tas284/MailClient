@@ -23,10 +23,13 @@ namespace MailClient.Application.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(id)) throw new ArgumentException("The id must be informed");
+
                 Email entity = await _repository.GetByIdAsync(id);
+
                 if (entity is null) throw new NotFoundException($"Email not found in the database: {id}");
-                EmailDto email = EmailDto.Create(entity);
-                return email;
+
+                return EmailDto.Create(entity);
             }
             catch (Exception ex)
             {
@@ -40,17 +43,13 @@ namespace MailClient.Application.Services
         {
             try
             {
+                if (pageSize <= 0) throw new ArgumentException("The pageSize must be grather than zero");
+
                 IEnumerable<Email> entities = await _repository.GetAllAsync(skip, pageSize);
-                if (entities == null || !entities.Any()) throw new Exception("No emails found in the database.");
+                if (entities == null || !entities.Any()) throw new NotFoundException("No emails found in the database");
 
                 long total = await _repository.CountAsync();
-                EmailPaginator emails = new()
-                {
-                    Emails = entities.Select(EmailDto.Create),
-                    PageSize = pageSize,
-                    NextSkip = skip + pageSize >= total ? 0 : skip + pageSize,
-                    Total = total
-                };
+                EmailPaginator emails = new EmailPaginator(entities, pageSize, skip, total);
 
                 return emails;
             }
@@ -58,7 +57,7 @@ namespace MailClient.Application.Services
             {
                 string message = $"An error occurred while retrieving all emails from the database: {ex.Message}";
                 _logger.LogError(message);
-                throw new Exception(message, ex);
+                throw;
             }
         }
 
@@ -66,14 +65,19 @@ namespace MailClient.Application.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(id)) throw new ArgumentException("The id is required to remove from database");
+
                 bool removed = await _repository.DeleteByIdAsync(id);
-                return removed ? "Email successfully removed." : "No email found with this Id.";
+
+                if (!removed) throw new NotFoundException($"No email found with this Id {id}");
+
+                return "Email successfully removed";
             }
             catch (Exception ex)
             {
                 string message = $"Error retrieving email from database: {ex.Message}";
                 _logger.LogError(message);
-                throw new Exception(message, ex);
+                throw;
             }
         }
 
@@ -82,15 +86,16 @@ namespace MailClient.Application.Services
             try
             {
                 long removed = await _repository.DeleteAllAsync();
-                return removed > 0
-                    ? $"{removed} emails successfully removed."
-                    : "No emails were found to delete.";
+
+                if (removed == 0) throw new NotFoundException("No emails were found to delete");
+
+                return $"{removed} emails successfully removed";
             }
             catch (Exception ex)
             {
                 string message = $"An error occurred while deleting emails from the database: {ex.Message}";
                 _logger.LogError(message);
-                throw new Exception(message, ex);
+                throw;
             }
         }
     }

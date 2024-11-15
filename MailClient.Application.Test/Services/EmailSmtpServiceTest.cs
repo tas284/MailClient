@@ -1,4 +1,5 @@
 ﻿using MailClient.Application.InputModel;
+using MailClient.Application.Interfaces;
 using MailClient.Application.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -12,13 +13,13 @@ namespace MailClient.Application.Test.Services
     {
         private readonly Mock<ILogger<EmailSmtpService>> _mockLogger;
         private readonly Mock<ISmtpClient> _mockSmtpClient;
-        private readonly EmailSmtpService _emailSmtpService;
+        private readonly EmailSmtpService _emailSmtpServiceSut;
 
         public EmailSmtpServiceTest()
         {
             _mockLogger = new Mock<ILogger<EmailSmtpService>>();
             _mockSmtpClient = new Mock<ISmtpClient>();
-            _emailSmtpService = new EmailSmtpService(_mockLogger.Object, _mockSmtpClient.Object);
+            _emailSmtpServiceSut = new EmailSmtpService(_mockLogger.Object, _mockSmtpClient.Object);
         }
 
         [Fact(DisplayName = "Send should return success when EmailSend successfully")]
@@ -31,7 +32,7 @@ namespace MailClient.Application.Test.Services
             _mockSmtpClient.Setup(client => client.Send(It.IsAny<MimeMessage>(), new CancellationToken(), null)).Returns("Ok");
             _mockSmtpClient.Setup(client => client.Disconnect(It.IsAny<bool>(), new CancellationToken())).Verifiable();
 
-            string result = _emailSmtpService.Send(input);
+            string result = _emailSmtpServiceSut.Send(input);
 
             Assert.Contains("Email send succesfully to", result);
             _mockSmtpClient.Verify(client => client.Connect(input.SmtpAddress, input.SmtpPort, SecureSocketOptions.Auto, new CancellationToken()), Times.Once);
@@ -47,7 +48,7 @@ namespace MailClient.Application.Test.Services
             input.SmtpPort = 0;
             string expectecResult = "Invalid SMTP:PORT Adrress";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
@@ -60,7 +61,7 @@ namespace MailClient.Application.Test.Services
             input.User = input.Password = null;
             string expectecResult = "Invalid user and password";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
@@ -73,7 +74,7 @@ namespace MailClient.Application.Test.Services
             input.FromEmail = input.FromName = null;
             string expectecResult = "Invalid sender email address";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
@@ -86,7 +87,7 @@ namespace MailClient.Application.Test.Services
             input.ToEmail = input.ToName = null;
             string expectecResult = "Invalid recipient email address";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
@@ -99,7 +100,7 @@ namespace MailClient.Application.Test.Services
             input.Subject = null;
             string expectecResult = "Subject cannot be empty";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
@@ -112,7 +113,7 @@ namespace MailClient.Application.Test.Services
             input.Body = input.BodyHtml = null;
             string expectecResult = "At least one body (text or HTML) must be provided";
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpService.Send(input));
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _emailSmtpServiceSut.Send(input));
 
             Assert.Equal(expectecResult, exception.Message);
             Assert.NotNull(exception);
