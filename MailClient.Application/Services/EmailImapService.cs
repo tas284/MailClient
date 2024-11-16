@@ -34,52 +34,53 @@ namespace MailClient.Application.Services
 
             int total = 0;
             int skip = 0;
-            int count = 12;
-            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = count };
+            int take = 12;
+            int countMessages = 0;
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = take };
 
             Stopwatch sw = new();
             sw.Start();
 
-            List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(count).ToList();
-            while (range.Count > 0)
+            List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(take).ToList();
+            do
             {
                 Parallel.ForEach(range, options, input =>
                 {
-                    using (var client = _serviceProvider.GetRequiredService<IImapClient>())
+                    using IImapClient client = _serviceProvider.GetRequiredService<IImapClient>();
+                    try
                     {
-                        try
+                        client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
+                        _logger.LogInformation($"Client Connected.");
+
+                        client.Authenticate(input.User, input.Password);
+                        _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
+
+                        IMailFolder inbox = client.Inbox;
+                        IList<UniqueId> uids = GetUids(input.StartDate, input.EndDate, inbox);
+                        _logger.LogInformation($"{uids.Count} messages find.");
+                        countMessages = uids.Count;
+
+                        foreach (var uid in uids)
                         {
-                            client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
-                            _logger.LogInformation($"Client Connected.");
-
-                            client.Authenticate(input.User, input.Password);
-                            _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
-
-                            IMailFolder inbox = client.Inbox;
-                            IList<UniqueId> uids = GetUids(input.StartDate, input.EndDate, inbox);
-                            _logger.LogInformation($"{uids.Count} messages find.");
-
-                            foreach (var uid in uids)
-                            {
-                                MimeMessage message = inbox.GetMessage(uid);
-                                _publisher.Publish(ImapMailMessage.Create(message));
-                                total++;
-                            }
+                            MimeMessage message = inbox.GetMessage(uid);
+                            _publisher.Publish(ImapMailMessage.Create(message));
+                            total++;
                         }
-                        catch (Exception ex)
-                        {
-                            var error = $"Erro to sync messages: {ex.Message}";
-                            _logger.LogError($"Erro: {error}.");
-                        }
-
-                        client.Disconnect(true);
-                        _logger.LogInformation($"Client disconnected.");
                     }
+                    catch (Exception ex)
+                    {
+                        var error = $"Erro to sync messages: {ex.Message}";
+                        _logger.LogError($"Erro: {error}.");
+                    }
+
+                    client.Disconnect(true);
+                    _logger.LogInformation($"Client disconnected.");
                 });
 
                 skip += range.Count;
-                range = rangeSyncEmailImapInputModel.Skip(skip).Take(count).ToList();
-            }
+                range = rangeSyncEmailImapInputModel.Skip(skip).Take(take).ToList();
+
+            } while (range.Count > 0 && countMessages > 0);
 
             sw.Stop();
 
