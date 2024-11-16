@@ -1,7 +1,6 @@
 ﻿using MailClient.Application.Controllers;
 using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -10,12 +9,12 @@ namespace MailClient.API.Test.Controllers
     public class SmtpControllerTest
     {
         private readonly Mock<IEmailSmtpService> _mockService;
-        private readonly SmtpController _smptController;
+        private readonly SmtpController _smptControllerSut;
 
         public SmtpControllerTest()
         {
             _mockService = new Mock<IEmailSmtpService>();
-            _smptController = new SmtpController(_mockService.Object);
+            _smptControllerSut = new SmtpController(_mockService.Object);
         }
 
         [Fact(DisplayName = "Send Email should returns ok result when service succeds")]
@@ -30,7 +29,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "Email sent successfully";
             _mockService.Setup(service => service.Send(input)).Returns(expectedResult);
 
-            IActionResult result = _smptController.SendEmail(input);
+            IActionResult result = _smptControllerSut.SendEmail(input);
 
             var okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
@@ -59,7 +58,7 @@ namespace MailClient.API.Test.Controllers
 
             _mockService.Setup(service => service.Send(input)).Throws(new Exception(expectedMessage));
 
-            IActionResult result = _smptController.SendEmail(input);
+            IActionResult result = _smptControllerSut.SendEmail(input);
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);

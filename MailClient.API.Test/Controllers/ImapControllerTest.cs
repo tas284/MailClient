@@ -9,12 +9,12 @@ namespace MailClient.API.Test.Controllers
     public class ImapControllerTest
     {
         private readonly Mock<IEmailImapService> _mockService;
-        private readonly ImapController _imapController;
+        private readonly ImapController _imapControllerSut;
 
         public ImapControllerTest()
         {
             _mockService = new Mock<IEmailImapService>();
-            _imapController = new ImapController(_mockService.Object);
+            _imapControllerSut = new ImapController(_mockService.Object);
         }
 
         [Fact(DisplayName = "Sync Messages should returns ok result when service succeds")]
@@ -29,7 +29,7 @@ namespace MailClient.API.Test.Controllers
 
             _mockService.Setup(service => service.SyncMessages(input)).Returns(expectedResult);
 
-            IActionResult result = _imapController.SyncMessages(input);
+            IActionResult result = _imapControllerSut.SyncMessages(input);
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
@@ -49,7 +49,7 @@ namespace MailClient.API.Test.Controllers
 
             _mockService.Setup(service => service.SyncMessages(input)).Throws(new Exception(expectedResult));
 
-            IActionResult result = _imapController.SyncMessages(input);
+            IActionResult result = _imapControllerSut.SyncMessages(input);
 
             BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);

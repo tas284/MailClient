@@ -6,6 +6,7 @@ using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit.Security;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 using System.Diagnostics;
@@ -15,11 +16,13 @@ namespace MailClient.Application.Services
     public class EmailImapService : IEmailImapService
     {
         private readonly IPublisher _publisher;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<EmailImapService> _logger;
 
-        public EmailImapService(IPublisher publisher, ILogger<EmailImapService> logger)
+        public EmailImapService(IPublisher publisher, IServiceProvider serviceProvider, ILogger<EmailImapService> logger)
         {
             _publisher = publisher;
+            _serviceProvider = serviceProvider;
             _logger = logger;
         }
 
@@ -42,13 +45,13 @@ namespace MailClient.Application.Services
             {
                 Parallel.ForEach(range, options, input =>
                 {
-                    using (var client = new ImapClient())
+                    using (var client = _serviceProvider.GetRequiredService<IImapClient>())
                     {
-                        client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
-                        _logger.LogInformation($"Client Connected.");
-
                         try
                         {
+                            client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
+                            _logger.LogInformation($"Client Connected.");
+
                             client.Authenticate(input.User, input.Password);
                             _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
 
