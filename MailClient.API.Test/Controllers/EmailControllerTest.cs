@@ -12,12 +12,12 @@ namespace MailClient.API.Test.Controllers
     public class EmailControllerTest
     {
         private readonly Mock<IEmailService> _mockService;
-        private readonly EmailController _emailController;
+        private readonly EmailController _emailControllerSut;
 
         public EmailControllerTest()
         {
             _mockService = new Mock<IEmailService>();
-            _emailController = new EmailController(_mockService.Object);
+            _emailControllerSut = new EmailController(_mockService.Object);
         }
 
         [Fact(DisplayName = "Get All Emails should return all emails according to the given skip and pageSize")]
@@ -30,7 +30,7 @@ namespace MailClient.API.Test.Controllers
             var expectedResult = GetEmailPaginator(pageSize, skip, total);
             _mockService.Setup(service => service.GetAllAsync(skip, pageSize)).ReturnsAsync(expectedResult);
 
-            IActionResult result = await _emailController.GetAll(skip, pageSize);
+            IActionResult result = await _emailControllerSut.GetAll(skip, pageSize);
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             var actualResult = okObjectResult.Value as EmailPaginator;
@@ -51,7 +51,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "Invalid parameters: skip is null, pageSize is null";
             _mockService.Setup(service => service.GetAllAsync(It.IsAny<int>(), It.IsAny<int>())).Throws(new Exception(expectedResult));
 
-            IActionResult result = await _emailController.GetAll(It.IsAny<int>(), It.IsAny<int>());
+            IActionResult result = await _emailControllerSut.GetAll(It.IsAny<int>(), It.IsAny<int>());
 
             BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.NotNull(badRequestObjectResult);
@@ -65,7 +65,7 @@ namespace MailClient.API.Test.Controllers
             var expectedResult = new EmailDto(id, "john@doe.com", "mary@anne.com", "Test", "<h1>Hello from XUnit</h1>", DateTime.Now);
             _mockService.Setup(service => service.GetByIdAsync(id)).ReturnsAsync(expectedResult);
 
-            IActionResult result = await _emailController.GetById(id);
+            IActionResult result = await _emailControllerSut.GetById(id);
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             var actualResult = okObjectResult.Value as EmailDto;
@@ -88,7 +88,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "The id must be informed";
             _mockService.Setup(service => service.GetByIdAsync(id)).Throws(new Exception(expectedResult));
 
-            IActionResult result = await _emailController.GetById(id);
+            IActionResult result = await _emailControllerSut.GetById(id);
 
             BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.NotNull(badRequestObjectResult);
@@ -103,7 +103,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "Email successfully removed";
             _mockService.Setup(service => service.DeleteByIdAsync(id)).ReturnsAsync(expectedResult);
 
-            IActionResult result = await _emailController.DeleteById(id);
+            IActionResult result = await _emailControllerSut.DeleteById(id);
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
@@ -113,7 +113,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResultgetById = "Email not found";
             _mockService.Setup(service => service.GetByIdAsync(id)).Throws(new NotFoundException(expectedResultgetById));
 
-            IActionResult resultGetById = await _emailController.GetById(id);
+            IActionResult resultGetById = await _emailControllerSut.GetById(id);
 
             NotFoundObjectResult notFoundObjectResult = Assert.IsType<NotFoundObjectResult>(resultGetById);
             Assert.Equal(404, notFoundObjectResult.StatusCode);
@@ -127,7 +127,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "All emails successfully removed.";
             _mockService.Setup(service => service.DeleteAllAsync()).ReturnsAsync(expectedResult);
 
-            IActionResult result = await _emailController.DeleteAll();
+            IActionResult result = await _emailControllerSut.DeleteAll();
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
@@ -141,7 +141,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "No emails found";
             _mockService.Setup(service => service.DeleteAllAsync()).ReturnsAsync(expectedResult);
 
-            IActionResult result = await _emailController.DeleteAll();
+            IActionResult result = await _emailControllerSut.DeleteAll();
 
             OkObjectResult okObjectResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okObjectResult.StatusCode);
@@ -155,7 +155,7 @@ namespace MailClient.API.Test.Controllers
             string expectedResult = "No emails found";
             _mockService.Setup(service => service.DeleteAllAsync()).Throws(new Exception(expectedResult));
 
-            IActionResult result = await _emailController.DeleteAll();
+            IActionResult result = await _emailControllerSut.DeleteAll();
 
             BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestObjectResult.StatusCode);

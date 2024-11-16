@@ -26,6 +26,7 @@ namespace MailClient.Application.InputModel
 
             return string.IsNullOrEmpty(Validations);
         }
+
         private bool IsValidEmail(string email)
         {
             try

@@ -6,6 +6,7 @@ using MailClient.Infrastructure.Connection;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Infrastructure.Publishers;
 using MailClient.Infrastructure.Repositories;
+using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ namespace MailClient.IoC
             services.AddScoped<IRepositoryEmail, RepositoryEmail>();
             services.AddScoped<IPublisher, RabbitMqPublisher>();
             services.AddScoped<ISmtpClient, SmtpClient>();
+            services.AddTransient<IImapClient, ImapClient>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEmailImapService, EmailImapService>();
             services.AddScoped<IEmailSmtpService, EmailSmtpService>();

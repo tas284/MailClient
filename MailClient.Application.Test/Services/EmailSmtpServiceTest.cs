@@ -1,5 +1,4 @@
 ﻿using MailClient.Application.InputModel;
-using MailClient.Application.Interfaces;
 using MailClient.Application.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
