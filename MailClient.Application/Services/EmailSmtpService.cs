@@ -1,5 +1,6 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
+using MailClient.Application.Specification;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
@@ -11,16 +12,18 @@ namespace MailClient.Application.Services
     {
         private readonly ILogger<EmailSmtpService> _logger;
         private readonly ISmtpClient _smtpClient;
+        private readonly ISpecification<SendEmailInputModel> _spec;
 
         public EmailSmtpService(ILogger<EmailSmtpService> logger, ISmtpClient smtpClient)
         {
             _logger = logger;
             _smtpClient = smtpClient;
+            _spec = new IsValidSendEmailInputModelSpec();
         }
 
         public string Send(SendEmailInputModel input)
         {
-            if (!input.IsValid())
+            if (!_spec.IsSatifiedBy(input))
             {
                 throw new ArgumentException(input.Validations);
             }
