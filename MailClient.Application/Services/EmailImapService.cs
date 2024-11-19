@@ -1,5 +1,6 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
+using MailClient.Application.Specification;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Infrastructure.Model;
 using MailKit;
@@ -18,17 +19,19 @@ namespace MailClient.Application.Services
         private readonly IPublisher _publisher;
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<EmailImapService> _logger;
+        private readonly ISpecification<SyncEmailImapInputModel> _spec;
 
         public EmailImapService(IPublisher publisher, IServiceProvider serviceProvider, ILogger<EmailImapService> logger)
         {
             _publisher = publisher;
             _serviceProvider = serviceProvider;
             _logger = logger;
+            _spec = new IsValidSyncEmailImapInputModelSpec();
         }
 
         public string SyncMessages(SyncEmailImapInputModel input)
         {
-            if (!input.IsValid()) throw new ArgumentException(input.Validations);
+            if (!_spec.IsSatifiedBy(input)) throw new ArgumentException(input.Validations);
 
             List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
