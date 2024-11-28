@@ -1,8 +1,6 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Interfaces;
 using MailClient.Application.Specification;
-using MailClient.Domain.Entities;
-using Moq;
 
 namespace MailClient.Application.Test.InputModel
 {
