@@ -6,7 +6,7 @@ namespace MailClient.Application.Specification
 {
     public class IsValidSendEmailInputModelSpec : ISpecification<SendEmailInputModel>
     {
-        public bool IsSatifiedBy(SendEmailInputModel inputModel)
+        public bool IsSatisfiedBy(SendEmailInputModel inputModel)
         {
             if (string.IsNullOrEmpty(inputModel.SmtpAddress) || inputModel.SmtpPort <= 0)
                 inputModel.Validations = "Invalid SMTP:PORT Adrress";

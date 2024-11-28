@@ -6,7 +6,7 @@ namespace MailClient.Application.Specification
 {
     public class IsValidSyncEmailImapInputModelSpec : ISpecification<SyncEmailImapInputModel>
     {
-        public bool IsSatifiedBy(SyncEmailImapInputModel inputModel)
+        public bool IsSatisfiedBy(SyncEmailImapInputModel inputModel)
         {
             if (string.IsNullOrEmpty(inputModel.ImapAddress) || inputModel.ImapPort <= 0)
                 inputModel.Validations = "Invalid IMAP:PORT Adrress";

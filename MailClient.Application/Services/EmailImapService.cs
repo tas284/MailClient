@@ -31,7 +31,7 @@ namespace MailClient.Application.Services
 
         public string SyncMessages(SyncEmailImapInputModel input)
         {
-            if (!_spec.IsSatifiedBy(input)) throw new ArgumentException(input.Validations);
+            if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
 
             List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
