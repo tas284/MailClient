@@ -23,7 +23,7 @@ namespace MailClient.Application.Services
 
         public string Send(SendEmailInputModel input)
         {
-            if (!_spec.IsSatifiedBy(input))
+            if (!_spec.IsSatisfiedBy(input))
             {
                 throw new ArgumentException(input.Validations);
             }

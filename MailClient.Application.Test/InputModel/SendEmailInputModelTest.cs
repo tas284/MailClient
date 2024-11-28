@@ -19,7 +19,7 @@ namespace MailClient.Application.Test.InputModel
         {
             SendEmailInputModel sendEmailInputModel = GetSendEmailInputModel();
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Null(sendEmailInputModel.Validations);
             Assert.True(isValid);
@@ -33,7 +33,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.SmtpAddress = null;
             string expectedResult = "Invalid SMTP:PORT Adrress";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
@@ -46,7 +46,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.User = sendEmailInputModel.Password = null;
             string expectedResult = "Invalid user and password";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
@@ -59,7 +59,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.ToEmail = sendEmailInputModel.ToName = null;
             string expectedResult = "Invalid recipient email address";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
@@ -72,7 +72,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.FromEmail = sendEmailInputModel.FromName = null;
             string expectedResult = "Invalid sender email address";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
@@ -85,7 +85,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.Subject = null;
             string expectedResult = "Subject cannot be empty";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
@@ -98,7 +98,7 @@ namespace MailClient.Application.Test.InputModel
             sendEmailInputModel.Body = sendEmailInputModel.BodyHtml = null;
             string expectedResult = "At least one body (text or HTML) must be provided";
 
-            bool isValid = _spec.IsSatifiedBy(sendEmailInputModel);
+            bool isValid = _spec.IsSatisfiedBy(sendEmailInputModel);
 
             Assert.Equal(expectedResult, sendEmailInputModel.Validations);
             Assert.False(isValid);
