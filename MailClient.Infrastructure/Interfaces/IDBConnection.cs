@@ -5,6 +5,6 @@ namespace MailClient.Infrastructure.Interfaces
     public interface IDBConnection
     {
         IMongoDatabase Database { get; }
-        IMongoCollection<TDocument> GetCollection<TDocument>(string name);
+        IMongoCollection<TDocument> GetCollection<TDocument>();
     }
 }

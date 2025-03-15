@@ -25,11 +25,9 @@ namespace MailClient.Application.Services
             {
                 if (string.IsNullOrEmpty(id)) throw new ArgumentException("The id must be informed");
 
-                Email entity = await _repository.GetByIdAsync(id);
+                var entity = await _repository.GetByIdAsync(id);
 
-                if (entity is null) throw new NotFoundException($"Email not found in the database: {id}");
-
-                return EmailDto.Create(entity);
+                return entity is null ? throw new NotFoundException($"Email not found in the database: {id}") : EmailDto.Create(entity);
             }
             catch (Exception ex)
             {
@@ -45,11 +43,11 @@ namespace MailClient.Application.Services
             {
                 if (pageSize <= 0) throw new ArgumentException("The pageSize must be grather than zero");
 
-                IEnumerable<Email> entities = await _repository.GetAllAsync(skip, pageSize);
+                var entities = await _repository.GetAllAsync(skip, pageSize);
                 if (entities == null || !entities.Any()) throw new NotFoundException("No emails found in the database");
 
                 long total = await _repository.CountAsync();
-                EmailPaginator emails = new EmailPaginator(entities, pageSize, skip, total);
+                var emails = new EmailPaginator(entities, pageSize, skip, total);
 
                 return emails;
             }
@@ -67,11 +65,9 @@ namespace MailClient.Application.Services
             {
                 if (string.IsNullOrEmpty(id)) throw new ArgumentException("The id is required to remove from database");
 
-                bool removed = await _repository.DeleteByIdAsync(id);
+                var removed = await _repository.DeleteByIdAsync(id);
 
-                if (!removed) throw new NotFoundException($"No email found with this Id {id}");
-
-                return "Email successfully removed";
+                return !removed ? throw new NotFoundException($"No email found with this Id {id}") : "Email successfully removed";
             }
             catch (Exception ex)
             {
@@ -87,9 +83,7 @@ namespace MailClient.Application.Services
             {
                 long removed = await _repository.DeleteAllAsync();
 
-                if (removed == 0) throw new NotFoundException("No emails were found to delete");
-
-                return $"{removed} emails successfully removed";
+                return removed == 0 ? throw new NotFoundException("No emails were found to delete") : $"{removed} emails successfully removed";
             }
             catch (Exception ex)
             {

@@ -23,18 +23,15 @@ namespace MailClient.Application.Services
 
         public string Send(SendEmailInputModel input)
         {
-            if (!_spec.IsSatisfiedBy(input))
-            {
-                throw new ArgumentException(input.Validations);
-            }
+            if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
 
-            string result = SendEmail(input);
+            var result = SendEmail(input);
             return result;
         }
 
         private string SendEmail(SendEmailInputModel input)
         {
-            string result = string.Empty;
+            var result = string.Empty;
             using (_smtpClient)
             {
                 try
@@ -44,9 +41,9 @@ namespace MailClient.Application.Services
                     _smtpClient.Authenticate(input.User, input.Password);
                     _logger.LogInformation($"Email authenticated on: {input.SmtpAddress}:{input.SmtpPort}");
 
-                    MimeMessage message = CreateMessage(input);
+                    var message = CreateMessage(input);
 
-                    string status = _smtpClient.Send(message);
+                    var status = _smtpClient.Send(message);
                     _logger.LogInformation($"Result MailKit Send [{status}].");
 
                     result = $"Email send succesfully to {message.To}.";
@@ -66,7 +63,7 @@ namespace MailClient.Application.Services
 
         private MimeMessage CreateMessage(SendEmailInputModel input)
         {
-            MimeMessage message = new MimeMessage();
+            var message = new MimeMessage();
             message.From.Add(new MailboxAddress(input.FromName, input.FromEmail));
             message.To.Add(new MailboxAddress(input.ToName, input.ToEmail));
             message.Subject = input.Subject;
@@ -78,7 +75,7 @@ namespace MailClient.Application.Services
         {
             if (!string.IsNullOrEmpty(input.BodyHtml))
             {
-                BodyBuilder builder = new BodyBuilder();
+                var builder = new BodyBuilder();
                 builder.TextBody = input.Body;
                 builder.HtmlBody = input.BodyHtml;
                 message.Body = builder.ToMessageBody();

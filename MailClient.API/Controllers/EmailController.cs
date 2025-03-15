@@ -24,7 +24,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                EmailPaginator result = await _service.GetAllAsync(skip, pageSize);
+                var result = await _service.GetAllAsync(skip, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                EmailDto result = await _service.GetByIdAsync(id);
+                var result = await _service.GetByIdAsync(id);
                 return Ok(result);
             }
             catch (NotFoundException ex)
@@ -56,7 +56,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                string result = await _service.DeleteByIdAsync(id);
+                var result = await _service.DeleteByIdAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                string result = await _service.DeleteAllAsync();
+                var result = await _service.DeleteAllAsync();
                 return Ok(result);
             }
             catch (Exception ex)
