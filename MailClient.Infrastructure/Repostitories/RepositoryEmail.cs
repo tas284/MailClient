@@ -18,7 +18,7 @@ namespace MailClient.Infrastructure.Repositories
         {
             _logger = logger;
             _connection = connection;
-            _collection = _connection.GetCollection<Email>();
+            _collection = _connection.GetCollection<Email>(nameof(Email));
         }
 
         public async Task InsertOneAsync(Email entity)
