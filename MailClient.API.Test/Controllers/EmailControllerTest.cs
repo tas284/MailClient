@@ -42,7 +42,7 @@ namespace MailClient.API.Test.Controllers
             Assert.Equal(nextSkip, actualResult.NextSkip);
             Assert.NotEqual(0, actualResult.Total);
             Assert.Equal(total, actualResult.Total);
-            Assert.True(actualResult.Emails.Any());
+            Assert.True(actualResult.Entities.Any());
         }
 
         [Fact(DisplayName = "Get All Emails with skip and pageSize null should return bad request")]
