@@ -21,7 +21,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                string result = _service.Send(input);
+                var result = _service.Send(input);
                 return Ok(result);
             }
             catch (Exception ex)

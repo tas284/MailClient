@@ -33,7 +33,7 @@ namespace MailClient.Application.Services
         {
             if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
 
-            List<SyncEmailImapInputModel> rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
+            var rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
 
             int total = 0;
             int skip = 0;
@@ -44,12 +44,12 @@ namespace MailClient.Application.Services
             Stopwatch sw = new();
             sw.Start();
 
-            List<SyncEmailImapInputModel> range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(take).ToList();
+            var range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(take).ToList();
             do
             {
                 Parallel.ForEach(range, options, input =>
                 {
-                    using IImapClient client = _serviceProvider.GetRequiredService<IImapClient>();
+                    using var client = _serviceProvider.GetRequiredService<IImapClient>();
                     try
                     {
                         client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
@@ -58,14 +58,14 @@ namespace MailClient.Application.Services
                         client.Authenticate(input.User, input.Password);
                         _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
 
-                        IMailFolder inbox = client.Inbox;
-                        IList<UniqueId> uids = GetUids(input.StartDate, input.EndDate, inbox);
+                        var inbox = client.Inbox;
+                        var uids = GetUids(input.StartDate, input.EndDate, inbox);
                         _logger.LogInformation($"{uids.Count} messages find.");
                         countMessages = uids.Count;
 
                         foreach (var uid in uids)
                         {
-                            MimeMessage message = inbox.GetMessage(uid);
+                            var message = inbox.GetMessage(uid);
                             _publisher.Publish(ImapMailMessage.Create(message));
                             total++;
                         }
@@ -87,21 +87,21 @@ namespace MailClient.Application.Services
 
             sw.Stop();
 
-            string result = $"{total} messages sync";
+            var result = $"{total} messages sync";
             _logger.LogInformation($"{result} in {sw.ElapsedMilliseconds / 1000} seconds!");
             return result;
         }
 
         private List<SyncEmailImapInputModel> GetRangeSyncEmailImapInputModel(SyncEmailImapInputModel input)
         {
-            List<SyncEmailImapInputModel> listSyncEmailImapInputModel = new();
-            double days = GetDays(input.StartDate);
+            var listSyncEmailImapInputModel = new List<SyncEmailImapInputModel>();
+            var days = GetDays(input.StartDate);
 
             input.EndDate = input.StartDate.AddDays(days);
 
             while (input.EndDate < DateTime.Now.AddDays(1))
             {
-                SyncEmailImapInputModel item = new SyncEmailImapInputModel
+                var item = new SyncEmailImapInputModel
                 {
                     User = input.User,
                     Password = input.Password,
@@ -120,9 +120,9 @@ namespace MailClient.Application.Services
             return listSyncEmailImapInputModel;
         }
 
-        private double GetDays(DateTime date)
+        private int GetDays(DateTime date)
         {
-            double days = 2;
+            var days = 2;
 
             DateTime first = DateTime.Now.AddDays(-60);
             DateTime second = DateTime.Now.AddDays(-120);
@@ -152,9 +152,8 @@ namespace MailClient.Application.Services
         private IList<UniqueId> GetUids(DateTime startDate, DateTime endDate, IMailFolder folder)
         {
             folder.Open(FolderAccess.ReadOnly);
-
-            DateSearchQuery deliveryAfter = SearchQuery.DeliveredAfter(startDate);
-            DateSearchQuery deliveryBefore = SearchQuery.DeliveredBefore(endDate);
+            var deliveryAfter = SearchQuery.DeliveredAfter(startDate);
+            var deliveryBefore = SearchQuery.DeliveredBefore(endDate);
             return folder.Search(SearchQuery.And(deliveryAfter, deliveryBefore));
         }
     }

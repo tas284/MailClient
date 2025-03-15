@@ -27,7 +27,7 @@ namespace MailClient.Infrastructure.Publishers
         {
             try
             {
-                ImapMailMessage imapMailMessage = message as ImapMailMessage;
+                var imapMailMessage = message as ImapMailMessage;
                 using IConnection connection = _factory.CreateConnection();
                 using IModel channel = connection.CreateModel();
 
@@ -38,8 +38,8 @@ namespace MailClient.Infrastructure.Publishers
                     autoDelete: false,
                     arguments: null);
 
-                string stringifiedMessage = JsonConvert.SerializeObject(imapMailMessage);
-                byte[] bytesMessage = Encoding.UTF8.GetBytes(stringifiedMessage);
+                var stringifiedMessage = JsonConvert.SerializeObject(imapMailMessage);
+                var bytesMessage = Encoding.UTF8.GetBytes(stringifiedMessage);
 
                 channel.BasicPublish(
                     exchange: "",

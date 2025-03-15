@@ -20,9 +20,9 @@ namespace MailClient.Infrastructure.Connection
 
         public IMongoDatabase Database {  get { return _database; } }
 
-        public IMongoCollection<TDocument> GetCollection<TDocument>(string name)
+        public IMongoCollection<TDocument> GetCollection<TDocument>()
         {
-            return _database.GetCollection<TDocument>(name);
+            return _database.GetCollection<TDocument>(nameof(TDocument));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace MailClient.Application.Controllers
         {
             try
             {
-                string result = _service.SyncMessages(inputModel);
+                var result = _service.SyncMessages(inputModel);
                 return Ok(result);
             }
             catch (Exception ex)

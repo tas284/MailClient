@@ -6,7 +6,9 @@ namespace MailClient.Infrastructure.Model
     {
         public static ImapMailMessage Create(MimeMessage message)
         {
-            return new ImapMailMessage(message.To.Mailboxes?.FirstOrDefault()?.Address, message.From.Mailboxes.FirstOrDefault()!.Address, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
+            var to = message.To.Mailboxes?.FirstOrDefault()!.Address;
+            var from = message.From.Mailboxes.FirstOrDefault()!.Address;
+            return new ImapMailMessage(to, from, message.Subject, message.HtmlBody, message.Date.LocalDateTime);
         }
     }
 }

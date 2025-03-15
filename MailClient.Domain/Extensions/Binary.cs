@@ -9,7 +9,7 @@ namespace MailClient.Domain.Extensions
         {
             if (string.IsNullOrEmpty(text)) return null;
 
-            byte[] textAsByte = Encoding.UTF8.GetBytes(text);
+            var textAsByte = Encoding.UTF8.GetBytes(text);
             using (var memoryStream = new MemoryStream())
             {
                 using (var gzipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))

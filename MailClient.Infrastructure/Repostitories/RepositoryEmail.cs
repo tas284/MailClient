@@ -10,7 +10,6 @@ namespace MailClient.Infrastructure.Repositories
 {
     public class RepositoryEmail : IRepositoryEmail
     {
-        private readonly string Name = "Email";
         private readonly IDBConnection _connection;
         private readonly IMongoCollection<Email> _collection;
         private readonly ILogger<RepositoryEmail> _logger;
@@ -19,7 +18,7 @@ namespace MailClient.Infrastructure.Repositories
         {
             _logger = logger;
             _connection = connection;
-            _collection = _connection.Database.GetCollection<Email>(Name);
+            _collection = _connection.GetCollection<Email>();
         }
 
         public async Task InsertOneAsync(Email entity)
@@ -40,7 +39,7 @@ namespace MailClient.Infrastructure.Repositories
         {
             try
             {
-                Email entity = await _collection.Find(FilterById(id)).FirstOrDefaultAsync();
+                var entity = await _collection.Find(FilterById(id)).FirstOrDefaultAsync();
                 return entity;
             }
             catch (Exception ex)
@@ -59,7 +58,7 @@ namespace MailClient.Infrastructure.Repositories
         {
             try
             {
-                DeleteResult result = await _collection.DeleteOneAsync(FilterById(id));
+                var result = await _collection.DeleteOneAsync(FilterById(id));
                 return result.IsAcknowledged && result.DeletedCount > 0;
             }
             catch (Exception ex)
@@ -73,7 +72,7 @@ namespace MailClient.Infrastructure.Repositories
         {
             try
             {
-                DeleteResult result = await _collection.DeleteManyAsync(_ => true);
+                var result = await _collection.DeleteManyAsync(_ => true);
                 return result.DeletedCount;
             }
             catch (Exception ex)
@@ -85,7 +84,7 @@ namespace MailClient.Infrastructure.Repositories
 
         private FilterDefinition<Email> FilterById(string id)
         {
-            FilterDefinition<Email> filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
+            var filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
             return filter;
         }
 
