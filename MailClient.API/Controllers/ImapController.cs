@@ -2,10 +2,11 @@
 using MailClient.Application.Interfaces;
 using MailClient.Application.InputModel;
 using System;
+using System.Threading.Tasks;
 
 namespace MailClient.Application.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ImapController : ControllerBase
     {
@@ -22,6 +23,20 @@ namespace MailClient.Application.Controllers
             try
             {
                 var result = _service.SyncMessages(inputModel);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SyncMessagesBatch([FromBody] SyncEmailImapInputModel inputModel)
+        {
+            try
+            {
+                var result = await _service.SyncMessagesBatch(inputModel);
                 return Ok(result);
             }
             catch (Exception ex)

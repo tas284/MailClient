@@ -9,5 +9,6 @@ namespace MailClient.Domain.Repositories
         Task<bool> DeleteByIdAsync(string id);
         Task<long> DeleteAllAsync();
         Task<long> CountAsync();
+        Task<long> InsertManyAsync(IEnumerable<Email> emails);
     }
 }
