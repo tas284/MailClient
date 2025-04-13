@@ -89,5 +89,22 @@ namespace MailClient.Infrastructure.Repositories
         }
 
         public async Task<long> CountAsync() => await _collection.CountDocumentsAsync(_ => true);
+
+        public async Task<long> InsertManyAsync(IEnumerable<Email> emails)
+        {
+            try
+            {
+                var bulkOperations = new List<WriteModel<Email>>();
+                bulkOperations.AddRange(emails.Select(email => new InsertOneModel<Email>(email)));
+                var result = await _collection.BulkWriteAsync(bulkOperations);
+                return result.InsertedCount;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error when inserting all email messages on the database: {ex.Message}");
+                throw new Exception($"Error when inserting all email messages on the database: {ex.Message}", ex);
+            }
+            
+        }
     }
 }

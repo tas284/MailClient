@@ -1,5 +1,6 @@
 ﻿using MailClient.Application.InputModel;
 using MailClient.Application.Services;
+using MailClient.Domain.Repositories;
 using MailClient.Infrastructure.Interfaces;
 using MailClient.Infrastructure.Model;
 using MailKit;
@@ -15,6 +16,7 @@ namespace MailClient.Application.Test.Services
     public class EmailImapServiceTest
     {
         private readonly Mock<IPublisher> _mockPublisher;
+        private readonly Mock<IRepositoryEmail> _mockRepository;
         private readonly Mock<IServiceProvider> _mockServiceProvider;
         private readonly Mock<ILogger<EmailImapService>> _mockLogger;
         private readonly Mock<IImapClient> _mockImapClient;
@@ -24,6 +26,7 @@ namespace MailClient.Application.Test.Services
         public EmailImapServiceTest()
         {
             _mockPublisher = new Mock<IPublisher>();
+            _mockRepository = new Mock<IRepositoryEmail>();
             _mockServiceProvider = new Mock<IServiceProvider>();
             _mockLogger = new Mock<ILogger<EmailImapService>>();
             _mockImapClient = new Mock<IImapClient>();
@@ -34,6 +37,7 @@ namespace MailClient.Application.Test.Services
 
             _emailImapServiceSut = new EmailImapService(
                 _mockPublisher.Object,
+                _mockRepository.Object,
                 _mockServiceProvider.Object,
                 _mockLogger.Object
             );
