@@ -74,6 +74,7 @@ namespace MailClient.Application.Services
                                 Inbox = message.To.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
                                 EmailFrom = message.From.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
                                 Subject = message.Subject,
+                                ExternalId = message.MessageId,
                                 Body = message.HtmlBody,
                                 Date = message.Date.LocalDateTime
                             };
@@ -98,7 +99,7 @@ namespace MailClient.Application.Services
 
             sw.Stop();
 
-            var insertedCount = await _repository.InsertManyAsync(emails.ToList());
+            var insertedCount = await _repository.InsertManyAsync(emails);
             var result = $"{insertedCount} messages sync";
             _logger.LogInformation($"{result} in {sw.ElapsedMilliseconds / 1000} seconds!");
 
