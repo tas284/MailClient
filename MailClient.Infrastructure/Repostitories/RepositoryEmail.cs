@@ -94,17 +94,17 @@ namespace MailClient.Infrastructure.Repositories
         {
             try
             {
-                var bulkOperations = new List<WriteModel<Email>>();
-                bulkOperations.AddRange(emails.Select(email => new InsertOneModel<Email>(email)));
-                var result = await _collection.BulkWriteAsync(bulkOperations);
-                return result.InsertedCount;
+                var result = await _collection.BulkWriteAsync(emails.Select(GetWriteModel));
+                return result.RequestCount;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error when inserting all email messages on the database: {ex.Message}");
                 throw new Exception($"Error when inserting all email messages on the database: {ex.Message}", ex);
             }
-            
         }
+
+        private WriteModel<Email> GetWriteModel(Email email)
+            => new ReplaceOneModel<Email>(Builders<Email>.Filter.Eq(x => x.ExternalId, email.ExternalId), email) { IsUpsert = true };
     }
 }

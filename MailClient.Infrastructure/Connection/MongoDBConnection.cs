@@ -18,11 +18,8 @@ namespace MailClient.Infrastructure.Connection
             _database = _client.GetDatabase(_configuration.Database);
         }
 
-        public IMongoDatabase Database {  get { return _database; } }
+        public IMongoDatabase Database => _database;
 
-        public IMongoCollection<TDocument> GetCollection<TDocument>(string collection)
-        {
-            return _database.GetCollection<TDocument>(collection);
-        }
+        public IMongoCollection<TDocument> GetCollection<TDocument>(string collection) => _database.GetCollection<TDocument>(collection);
     }
 }
