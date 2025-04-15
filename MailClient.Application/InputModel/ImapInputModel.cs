@@ -2,7 +2,7 @@
 
 namespace MailClient.Application.InputModel
 {
-    public class SyncEmailImapInputModel
+    public class ImapInputModel
     {
         public string User { get; set; }
         public string Password { get; set; }

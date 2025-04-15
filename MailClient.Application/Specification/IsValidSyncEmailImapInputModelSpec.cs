@@ -4,9 +4,9 @@ using System.Net.Mail;
 
 namespace MailClient.Application.Specification
 {
-    public class IsValidSyncEmailImapInputModelSpec : ISpecification<SyncEmailImapInputModel>
+    public class IsValidSyncEmailImapInputModelSpec : ISpecification<ImapInputModel>
     {
-        public bool IsSatisfiedBy(SyncEmailImapInputModel inputModel)
+        public bool IsSatisfiedBy(ImapInputModel inputModel)
         {
             if (string.IsNullOrEmpty(inputModel.ImapAddress) || inputModel.ImapPort <= 0)
                 inputModel.Validations = "Invalid IMAP:PORT Adrress";

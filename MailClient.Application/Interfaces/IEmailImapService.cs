@@ -4,7 +4,7 @@ namespace MailClient.Application.Interfaces
 {
     public interface IEmailImapService
     {
-        string SyncMessages(SyncEmailImapInputModel input);
-        Task<string> SyncMessagesBatch(SyncEmailImapInputModel input);
+        string SyncMessages(ImapInputModel input);
+        Task<string> SyncMessagesBatch(ImapInputModel input);
     }
 }

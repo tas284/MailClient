@@ -1,4 +1,5 @@
 ﻿using MailClient.Domain.Entities;
+using System.Linq.Expressions;
 namespace MailClient.Domain.Repositories
 {
     public interface IRepositoryEmail
@@ -8,7 +9,8 @@ namespace MailClient.Domain.Repositories
         Task<IEnumerable<Email>> GetAllAsync(int pageSize, int skip);
         Task<bool> DeleteByIdAsync(string id);
         Task<long> DeleteAllAsync();
-        Task<long> CountAsync();
-        Task<long> InsertManyAsync(IEnumerable<Email> emails);
+        Task<long> CountAsync(Expression<Func<Email, bool>> filter);
+        Task<long> UpsertManyAsync(IEnumerable<Email> emails);
+        Task UpsertAsync(Email email);
     }
 }

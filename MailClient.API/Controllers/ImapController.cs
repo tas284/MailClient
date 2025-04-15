@@ -18,11 +18,11 @@ namespace MailClient.Application.Controllers
         }
 
         [HttpPost]
-        public IActionResult SyncMessages([FromBody] SyncEmailImapInputModel inputModel)
+        public IActionResult SyncMessages([FromBody] ImapInputModel input)
         {
             try
             {
-                var result = _service.SyncMessages(inputModel);
+                var result = _service.SyncMessages(input);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -32,11 +32,11 @@ namespace MailClient.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SyncMessagesBatch([FromBody] SyncEmailImapInputModel inputModel)
+        public async Task<IActionResult> SyncMessagesBatch([FromBody] ImapInputModel input)
         {
             try
             {
-                var result = await _service.SyncMessagesBatch(inputModel);
+                var result = await _service.SyncMessagesBatch(input);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using MailClient.Domain.Entities;
 using MailClient.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using MailClient.Infrastructure.Interfaces;
+using System.Linq.Expressions;
 
 namespace MailClient.Infrastructure.Repositories
 {
@@ -82,15 +83,25 @@ namespace MailClient.Infrastructure.Repositories
             }
         }
 
-        private FilterDefinition<Email> FilterById(string id)
+        public async Task<long> CountAsync(Expression<Func<Email, bool>> filter) => await _collection.CountDocumentsAsync(filter);
+
+        public async Task UpsertAsync(Email email)
         {
-            var filter = Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
-            return filter;
+            try
+            {
+                var options = new FindOneAndReplaceOptions<Email> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
+                var filter = Builders<Email>.Filter.Eq(x => x.MessageId, email.MessageId);
+                var entity = await _collection.FindOneAndReplaceAsync(filter, email, options);
+                _logger.LogInformation($"Email message successfully upserting into the database: {entity.Id}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error when upserting email message to database: {ex.Message}");
+                throw new Exception($"Error when upserting email message to database: {ex.Message}", ex);
+            }
         }
 
-        public async Task<long> CountAsync() => await _collection.CountDocumentsAsync(_ => true);
-
-        public async Task<long> InsertManyAsync(IEnumerable<Email> emails)
+        public async Task<long> UpsertManyAsync(IEnumerable<Email> emails)
         {
             try
             {
@@ -105,6 +116,9 @@ namespace MailClient.Infrastructure.Repositories
         }
 
         private WriteModel<Email> GetWriteModel(Email email)
-            => new ReplaceOneModel<Email>(Builders<Email>.Filter.Eq(x => x.ExternalId, email.ExternalId), email) { IsUpsert = true };
+            => new ReplaceOneModel<Email>(Builders<Email>.Filter.Eq(x => x.MessageId, email.MessageId), email) { IsUpsert = true };
+        
+        private FilterDefinition<Email> FilterById(string id)
+            => Builders<Email>.Filter.Eq(x => x.Id, new ObjectId(id));
     }
 }

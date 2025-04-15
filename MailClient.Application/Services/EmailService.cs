@@ -46,7 +46,7 @@ namespace MailClient.Application.Services
                 var entities = await _repository.GetAllAsync(skip, pageSize);
                 if (entities == null || !entities.Any()) throw new NotFoundException("No emails found in the database");
 
-                long total = await _repository.CountAsync();
+                var total = await _repository.CountAsync(_ => true);
                 var emails = new EmailPaginator(entities, pageSize, skip, total);
 
                 return emails;
