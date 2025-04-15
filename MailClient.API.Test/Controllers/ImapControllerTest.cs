@@ -20,7 +20,7 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Sync Messages should returns ok result when service succeds")]
         public void SyncMessages_ReturnsOkResult_WhenServiceSucceds()
         {
-            SyncEmailImapInputModel input = new SyncEmailImapInputModel
+            ImapInputModel input = new ImapInputModel
             {
                 User = "john@doe.com",
                 Password = "john@doe.com"
@@ -40,7 +40,7 @@ namespace MailClient.API.Test.Controllers
         [Fact(DisplayName = "Sync Messages should returns bad request when service throws exception")]
         public void SyncMessages_ReturnsBadRequest_WhenServiceThrowsException()
         {
-            SyncEmailImapInputModel input = new SyncEmailImapInputModel
+            ImapInputModel input = new ImapInputModel
             {
                 User = "john@doe.com",
                 Password = "john@doe.com"

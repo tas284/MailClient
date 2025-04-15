@@ -13,7 +13,7 @@ namespace MailClient.Domain.Entities
         public string Inbox { get; set; }
         public string EmailFrom { get; set; }
         public string Subject { get; set; }
-        public string ExternalId { get; set; }
+        public string MessageId { get; set; }
 
         [BsonIgnore]
         public string Body

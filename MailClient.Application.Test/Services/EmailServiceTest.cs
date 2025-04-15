@@ -77,7 +77,7 @@ namespace MailClient.Application.Test.Services
             int nextSkip = skip + pageSize >= total ? 0 : skip + pageSize;
             IEnumerable<Email> emails = GetEmails(pageSize);
             _mockRepositoryEmail.Setup(repository => repository.GetAllAsync(skip, pageSize)).ReturnsAsync(emails);
-            _mockRepositoryEmail.Setup(repository => repository.CountAsync()).ReturnsAsync(total);
+            _mockRepositoryEmail.Setup(repository => repository.CountAsync(_ => true)).ReturnsAsync(total);
 
             EmailPaginator actualResult = await _emailServiceSut.GetAllAsync(skip, pageSize);
 
@@ -86,7 +86,7 @@ namespace MailClient.Application.Test.Services
             Assert.Equal(nextSkip, actualResult.NextSkip);
             Assert.Equal(total, actualResult.Total);
             _mockRepositoryEmail.Verify(repository => repository.GetAllAsync(skip, pageSize), Times.Once);
-            _mockRepositoryEmail.Verify(repository => repository.CountAsync(), Times.Once);
+            _mockRepositoryEmail.Verify(repository => repository.CountAsync(_ => true), Times.Once);
         }
 
         [Fact(DisplayName = "Get All Async should trows argument exception if pageSize is zero")]
@@ -115,7 +115,7 @@ namespace MailClient.Application.Test.Services
             Assert.NotNull(actualResult);
             Assert.Equal(expectedResult, actualResult.Message);
             _mockRepositoryEmail.Verify(repository => repository.GetAllAsync(skip, pageSize), Times.Once);
-            _mockRepositoryEmail.Verify(repository => repository.CountAsync(), Times.Never);
+            _mockRepositoryEmail.Verify(repository => repository.CountAsync(_ => true), Times.Never);
         }
 
         [Fact(DisplayName = "Delete By Id Async should return success when email is removed from the database")]

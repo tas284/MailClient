@@ -50,20 +50,22 @@ namespace MailClient.Services
             {
                 var body = eventArgs.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var imapMail = JsonConvert.DeserializeObject<ImapMailMessage>(message);
+                var entity = JsonConvert.DeserializeObject<ImapMailMessage>(message);
 
-                if (imapMail != null)
+                if (entity != null)
                 {
-                    _logger.LogInformation($"Email received: {imapMail.Subject} from {imapMail.EmailFrom}");
+                    _logger.LogInformation($"Email received: {entity.Subject} from {entity.EmailFrom}");
 
-                    await _repository.InsertOneAsync(new Email
+                    var email = new Email
                     {
-                        Inbox = imapMail.EmailTo,
-                        EmailFrom = imapMail.EmailFrom,
-                        Subject = imapMail.Subject,
-                        Body = imapMail.Body,
-                        Date = imapMail.Date
-                    });
+                        Inbox = entity.EmailTo,
+                        EmailFrom = entity.EmailFrom,
+                        Subject = entity.Subject,
+                        Body = entity.Body,
+                        MessageId = entity.MessageId,
+                        Date = entity.Date
+                    };
+                    await _repository.UpsertAsync(email);
                 }
             }
             catch (Exception ex)

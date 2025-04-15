@@ -22,7 +22,7 @@ namespace MailClient.Application.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly IRepositoryEmail _repository;
         private readonly ILogger<EmailImapService> _logger;
-        private readonly ISpecification<SyncEmailImapInputModel> _spec;
+        private readonly ISpecification<ImapInputModel> _spec;
 
         public EmailImapService(IPublisher publisher, IRepositoryEmail repository, IServiceProvider serviceProvider, ILogger<EmailImapService> logger)
         {
@@ -33,80 +33,7 @@ namespace MailClient.Application.Services
             _spec = new IsValidSyncEmailImapInputModelSpec();
         }
 
-        public async Task<string> SyncMessagesBatch(SyncEmailImapInputModel input)
-        {
-            if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
-            var emails = new ConcurrentBag<Email>();
-
-            var rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
-            int skip = 0;
-            int take = 12;
-            int countMessages = 0;
-            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = take };
-
-            Stopwatch sw = new();
-            sw.Start();
-
-            var range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(take).ToList();
-            do
-            {
-                Parallel.ForEach(range, options, input =>
-                {
-                    using var client = _serviceProvider.GetRequiredService<IImapClient>();
-                    try
-                    {
-                        client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
-                        _logger.LogInformation($"Client Connected.");
-
-                        client.Authenticate(input.User, input.Password);
-                        _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
-
-                        var inbox = client.Inbox;
-                        var uids = GetUids(input.StartDate, input.EndDate, inbox);
-                        _logger.LogInformation($"{uids.Count} messages find.");
-                        countMessages = uids.Count;
-
-                        foreach (var uid in uids)
-                        {
-                            var message = inbox.GetMessage(uid);
-                            var email = new Email
-                            {
-                                Inbox = message.To.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
-                                EmailFrom = message.From.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
-                                Subject = message.Subject,
-                                ExternalId = message.MessageId,
-                                Body = message.HtmlBody,
-                                Date = message.Date.LocalDateTime
-                            };
-                            emails.Add(email);
-                            _logger.LogInformation($"Message received from server : {message.Subject}.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var error = $"Erro to sync messages: {ex.Message}";
-                        _logger.LogError($"Erro: {error}.");
-                    }
-
-                    client.Disconnect(true);
-                    _logger.LogInformation($"Client disconnected.");
-                });
-
-                skip += range.Count;
-                range = rangeSyncEmailImapInputModel.Skip(skip).Take(take).ToList();
-
-            } while (range.Count > 0 && countMessages > 0);
-
-            sw.Stop();
-
-            var insertedCount = await _repository.InsertManyAsync(emails);
-            var result = $"{insertedCount} messages sync";
-            _logger.LogInformation($"{result} in {sw.ElapsedMilliseconds / 1000} seconds!");
-
-            return result;
-        }
-
-        public string SyncMessages(SyncEmailImapInputModel input)
+        public string SyncMessages(ImapInputModel input)
         {
             if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
 
@@ -169,16 +96,89 @@ namespace MailClient.Application.Services
             return result;
         }
 
-        private List<SyncEmailImapInputModel> GetRangeSyncEmailImapInputModel(SyncEmailImapInputModel input)
+        public async Task<string> SyncMessagesBatch(ImapInputModel input)
         {
-            var listSyncEmailImapInputModel = new List<SyncEmailImapInputModel>();
+            if (!_spec.IsSatisfiedBy(input)) throw new ArgumentException(input.Validations);
+            var emails = new ConcurrentBag<Email>();
+
+            var rangeSyncEmailImapInputModel = GetRangeSyncEmailImapInputModel(input);
+            int skip = 0;
+            int take = 12;
+            int countMessages = 0;
+            ParallelOptions options = new ParallelOptions { MaxDegreeOfParallelism = take };
+
+            Stopwatch sw = new();
+            sw.Start();
+
+            var range = rangeSyncEmailImapInputModel.SkipLast(skip).TakeLast(take).ToList();
+            do
+            {
+                Parallel.ForEach(range, options, input =>
+                {
+                    using var client = _serviceProvider.GetRequiredService<IImapClient>();
+                    try
+                    {
+                        client.Connect(input.ImapAddress, input.ImapPort, SecureSocketOptions.Auto);
+                        _logger.LogInformation($"Client Connected.");
+
+                        client.Authenticate(input.User, input.Password);
+                        _logger.LogInformation($"Email authenticated on: {input.ImapAddress}:{input.ImapPort}");
+
+                        var inbox = client.Inbox;
+                        var uids = GetUids(input.StartDate, input.EndDate, inbox);
+                        _logger.LogInformation($"{uids.Count} messages find.");
+                        countMessages = uids.Count;
+
+                        foreach (var uid in uids)
+                        {
+                            var message = inbox.GetMessage(uid);
+                            var email = new Email
+                            {
+                                Inbox = message.To.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
+                                EmailFrom = message.From.Mailboxes?.FirstOrDefault()?.Address ?? string.Empty,
+                                Subject = message.Subject,
+                                MessageId = message.MessageId,
+                                Body = message.HtmlBody,
+                                Date = message.Date.LocalDateTime
+                            };
+                            emails.Add(email);
+                            _logger.LogInformation($"Message received from server : {message.Subject}.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var error = $"Erro to sync messages: {ex.Message}";
+                        _logger.LogError($"Erro: {error}.");
+                    }
+
+                    client.Disconnect(true);
+                    _logger.LogInformation($"Client disconnected.");
+                });
+
+                skip += range.Count;
+                range = rangeSyncEmailImapInputModel.Skip(skip).Take(take).ToList();
+
+            } while (range.Count > 0 && countMessages > 0);
+
+            sw.Stop();
+
+            var insertedCount = await _repository.UpsertManyAsync(emails);
+            var result = $"{insertedCount} messages sync";
+            _logger.LogInformation($"{result} in {sw.ElapsedMilliseconds / 1000} seconds!");
+
+            return result;
+        }
+
+        private List<ImapInputModel> GetRangeSyncEmailImapInputModel(ImapInputModel input)
+        {
+            var listSyncEmailImapInputModel = new List<ImapInputModel>();
             var days = GetDays(input.StartDate);
 
             input.EndDate = input.StartDate.AddDays(days);
 
             while (input.EndDate < DateTime.Now.AddDays(1))
             {
-                var item = new SyncEmailImapInputModel
+                var item = new ImapInputModel
                 {
                     User = input.User,
                     Password = input.Password,

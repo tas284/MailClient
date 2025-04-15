@@ -50,7 +50,7 @@ namespace MailClient.Application.Test.Services
         {
             int total = 10;
             string expectedResult = $"{total} messages sync";
-            SyncEmailImapInputModel input = GetSyncEmailImapInputModel();
+            ImapInputModel input = GetSyncEmailImapInputModel();
 
             var cancelattionToken = new CancellationToken();
             List<UniqueId> mockUids = Enumerable.Range(1, total).Select(i => new UniqueId((uint)i)).ToList();
@@ -74,7 +74,7 @@ namespace MailClient.Application.Test.Services
         public void SyncMessages_ShouldThrowsArugmentException_WhenSyncEmailImapInputModelIsInvalid()
         {
             string expectedResult = "Invalid IMAP:PORT Adrress";
-            SyncEmailImapInputModel syncEmailImapInputModel = GetSyncEmailImapInputModel();
+            ImapInputModel syncEmailImapInputModel = GetSyncEmailImapInputModel();
             syncEmailImapInputModel.ImapAddress = string.Empty;
             syncEmailImapInputModel.ImapPort = 0;
 
@@ -84,9 +84,9 @@ namespace MailClient.Application.Test.Services
             Assert.Equal(expectedResult, actualResult.Message);
         }
 
-        private SyncEmailImapInputModel GetSyncEmailImapInputModel()
+        private ImapInputModel GetSyncEmailImapInputModel()
         {
-            return new SyncEmailImapInputModel
+            return new ImapInputModel
             {
                 User = "john@doe.com",
                 Password = "password",
