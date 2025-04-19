@@ -1,43 +1,77 @@
-# MailClient
 
-## Email Consumer and API - ASP.NET Core Project
+# 📬 MailClient - ASP.NET Core Project
 
-Project to read emails from a specified inbox using an ASP.NET Core API and a console application (consumer). The API authenticates with an email server to retrieve emails for a specified period and sends them to a RabbitMQ queue. The consumer then processes these messages and saves them to a MongoDB database.
+Projeto para leitura de e-mails a partir de uma caixa de entrada configurada, utilizando uma API ASP.NET Core e uma aplicação console (consumer).  
+A API se autentica com o servidor de e-mails, busca mensagens em um período definido e as envia para uma fila no **RabbitMQ**.  
+O **Consumer** então processa essas mensagens e as salva em um banco de dados **MongoDB**.
 
-### Requirements
-1. NET SDK (version 8.0 or higher)
-2. MongoDB
-3. RabbitMQ
+---
 
-### Execution Options
-1. ASP.NET Core Web Application
-The API serves as the entry point for email retrieval.
+## ✅ Requisitos
 
-1. Console Application (Consumer)
-Processes messages from the RabbitMQ queue and saves them to the database.
+- [.NET SDK 8.0+](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- MongoDB
+- RabbitMQ
 
-### Build and Run
+---
 
-#### To run this project, enter the root directory and execute the following commands:
+## 🚀 Opções de Execução
+
+### 1. API - Aplicação Web ASP.NET Core
+
+A API serve como ponto de entrada para buscar os e-mails da caixa de entrada configurada.
+
+### 2. Aplicação Console (Consumer)
+
+Responsável por consumir as mensagens da fila do RabbitMQ e persistir no MongoDB.
+
+---
+
+## 🔧 Build e Execução
+
+Acesse o diretório raiz do projeto e execute os seguintes comandos:
+
+### 📡 Executar a API:
 
 ```bash
 dotnet build
-```
-
-```bash
 dotnet run .\MailClient.API.csproj
 ```
 
-##### To run the consumer:
+### 🖥️ Executar o Consumer:
 
 ```bash
 dotnet run .\MailClient.Consumer.csproj
 ```
 
-### Run requirements MongoDB and RabbitMQ on Docker
+---
+
+## 🐳 Subindo MongoDB e RabbitMQ com Docker
+
+Execute os comandos abaixo para rodar MongoDB e RabbitMQ em containers:
 
 ```bash
 docker volume create mongodb
+
 docker run --name mongodb -d -p 27017:27017 -v mongodb:/data/db mongo
-docker run --name rabbitmq -d -p 15672:15672 -p 5672:5672 -p 25676:25676 rabbitmq:3-management
+
+docker run --name rabbitmq -d \
+  -p 15672:15672 \
+  -p 5672:5672 \
+  -p 25676:25676 \
+  rabbitmq:3-management
 ```
+
+---
+
+## 📄 Licença
+
+Este projeto pode ser licenciado conforme sua preferência. Adicione o arquivo `LICENSE` com os detalhes da licença desejada.
+
+---
+
+## 👨‍💻 Desenvolvido por
+
+Tiago (MailClient)
+
+---
